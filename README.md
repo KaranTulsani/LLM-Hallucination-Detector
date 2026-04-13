@@ -20,6 +20,24 @@ Sits between your user and any LLM. You send a query + response — it scores tr
 - 🟡 **50–74** — Uncertain. Some claims may be unverifiable.
 - 🔴 **0–49** — Likely Hallucinated. Multiple signals disagree or flag issues.
 
+## Score Calibration & Logic
+
+To prevent deceptive metrics (like high high confidence for incorrect facts), the system uses a calibrated blending approach:
+
+### 🟢 Semantic Entropy (Threshold-based)
+Instead of a raw similarity score, we use a calibrated threshold mapping:
+- **Similarity > 0.92:** Mapped to **100%** (Full Confidence).
+- **Similarity < 0.60:** Mapped to **0%** (No Confidence).
+- **Why?** Slight phrasing variations in highly consistent answers (e.g., using synonyms) naturally prevent a perfect 1.0 cosine similarity. A value like **0.98** is already considered "perfectly consistent."
+
+### 🟡 LLM Judge (Weighted Blend + Penalties)
+The Judge score is a holistic evaluation, not just a raw confidence number:
+- **60% Weight:** Claim Verification Ratio (Verified vs Unverified claims).
+- **40% Weight:** Judge's internal confidence score.
+- **Penalties:** Subtracts points for "Overconfidence flags" (e.g., certain language for uncertain topics) or "Fabricated Citations."
+
+*Example: A judge with 90% confidence that verified 4/5 claims but used overconfident language results in a final score of **79%**.*
+
 ## Tech Stack
 
 - **Backend**: FastAPI + Python
