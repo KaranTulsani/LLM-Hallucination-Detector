@@ -96,34 +96,6 @@ Frontend runs on `http://localhost:5173` and proxies `/api` to the backend at `h
 | `POST` | `/api/chat/stream` | Streaming version of `/api/chat` |
 | `POST` | `/api/correct` | Fix a hallucinated response |
 
-### Example: Detect Hallucination
-
-```bash
-curl -X POST http://localhost:8000/api/detect \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "When was the Eiffel Tower built?",
-    "response": "The Eiffel Tower was built in 1901."
-  }'
-```
-
-### Example: Full Chat Flow
-
-```bash
-curl -X POST http://localhost:8000/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Who invented the telephone?",
-    "auto_fix": false
-  }'
-```
-
-### Example: Health Check
-
-```bash
-curl http://localhost:8000/api/health
-# Returns: { "status": "ok", "model": "llama-3.1-8b-instant", "judge_model": "llama-3.3-70b-versatile" }
-```
 
 ## Correction Strategies
 
