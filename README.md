@@ -55,6 +55,16 @@ Claims are extracted from the response and verified against real-time Google Sea
 - **Web Search**: Serper.dev (real-time Google Search for RAG grounding)
 - **HTTP Client**: httpx (async web search requests)
 
+## Screenshots
+
+<img width="1918" height="992" alt="image" src="https://github.com/user-attachments/assets/c5ec566d-f056-482b-b413-b874524742d9" />
+<img width="1918" height="987" alt="image" src="https://github.com/user-attachments/assets/031f3e84-592e-49a9-80b6-e36d2c3f54f6" />
+<img width="1080" height="718" alt="image" src="https://github.com/user-attachments/assets/d90dafd6-d993-45d9-99df-f18608b5e6b3" />
+<img width="1335" height="717" alt="image" src="https://github.com/user-attachments/assets/6f53444f-ac57-4028-987d-8ac6bd4148ed" />
+<img width="1297" height="732" alt="image" src="https://github.com/user-attachments/assets/f5b28bbd-c483-4508-b9f0-3a9cabf7b113" />
+<img width="1488" height="798" alt="image" src="https://github.com/user-attachments/assets/24b7483c-43f2-4063-bf5d-585d36e344ec" />
+<img width="1475" height="790" alt="image" src="https://github.com/user-attachments/assets/3ca5cf78-7062-49a7-9764-6de80386abab" />
+
 ## Quick Start
 
 ### 1. Backend
