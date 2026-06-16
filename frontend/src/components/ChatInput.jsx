@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Loader2 } from 'lucide-react';
+import { Send, Loader2, Sparkles } from 'lucide-react';
 
 export default function ChatInput({ onSubmit, isLoading }) {
   const [query, setQuery] = useState('');
+  const [autoFix, setAutoFix] = useState(false);
   const textareaRef = useRef(null);
 
   // Auto-resize textarea
@@ -17,7 +18,7 @@ export default function ChatInput({ onSubmit, isLoading }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!query.trim() || isLoading) return;
-    onSubmit(query.trim());
+    onSubmit(query.trim(), autoFix);
     setQuery('');
   };
 
@@ -32,16 +33,12 @@ export default function ChatInput({ onSubmit, isLoading }) {
     <form
       onSubmit={handleSubmit}
       id="chat-input-form"
-      className="relative"
+      className="relative glass-card"
       style={{
-        background: 'linear-gradient(135deg, rgba(18,18,26,0.9), rgba(26,26,38,0.7))',
-        backdropFilter: 'blur(16px)',
+        padding: '0.85rem',
         border: '1px solid var(--clr-border)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '0.75rem',
-        transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.24)',
       }}
-      onFocus={() => {}}
     >
       <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.75rem' }}>
         <textarea
@@ -50,7 +47,7 @@ export default function ChatInput({ onSubmit, isLoading }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask anything… e.g. 'Who invented the telephone?'"
+          placeholder="Ask a factual question... (e.g. 'Who was the first person on the moon?')"
           rows={1}
           disabled={isLoading}
           style={{
@@ -72,15 +69,17 @@ export default function ChatInput({ onSubmit, isLoading }) {
           disabled={isLoading || !query.trim()}
           className="btn btn-primary"
           style={{
-            padding: '0.6rem',
+            padding: '0.65rem',
             borderRadius: '0.65rem',
-            opacity: isLoading || !query.trim() ? 0.4 : 1,
-            minWidth: '42px',
+            minWidth: '44px',
+            height: '44px',
             justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
           {isLoading ? (
-            <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+            <Loader2 size={18} className="animate-spin" />
           ) : (
             <Send size={18} />
           )}
@@ -92,36 +91,48 @@ export default function ChatInput({ onSubmit, isLoading }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginTop: '0.5rem',
-          paddingTop: '0.5rem',
+          marginTop: '0.75rem',
+          paddingTop: '0.75rem',
           borderTop: '1px solid var(--clr-border)',
         }}
       >
-        <span style={{
-          fontSize: '0.72rem',
-          color: 'var(--clr-text-muted)',
-          letterSpacing: '0.02em',
-        }}>
-          Shift + Enter for new line • Enter to send
-        </span>
-        <span style={{
-          fontSize: '0.72rem',
-          color: 'var(--clr-text-muted)',
-          fontFamily: 'var(--font-mono)',
-        }}>
-          {query.length > 0 ? `${query.length} chars` : ''}
-        </span>
-      </div>
+        {/* Switch component for Auto-Fix */}
+        <div 
+          className="switch-container" 
+          onClick={() => !isLoading && setAutoFix(!autoFix)}
+          style={{ opacity: isLoading ? 0.6 : 1 }}
+        >
+          <div className={`switch-track ${autoFix ? 'active' : ''}`}>
+            <div className="switch-thumb" />
+          </div>
+          <span className="switch-label" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <Sparkles size={12} color={autoFix ? 'var(--clr-accent-2)' : 'var(--clr-text-muted)'} />
+            Auto-Fix Hallucinations
+          </span>
+        </div>
 
-      <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        textarea::placeholder {
-          color: var(--clr-text-muted);
-        }
-      `}</style>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{
+            fontSize: '0.72rem',
+            color: 'var(--clr-text-muted)',
+            letterSpacing: '0.02em',
+          }}>
+            Enter to send
+          </span>
+          {query.length > 0 && (
+            <span style={{
+              fontSize: '0.72rem',
+              color: 'var(--clr-text-muted)',
+              fontFamily: 'var(--font-mono)',
+              background: 'var(--clr-surface-2)',
+              padding: '0.1rem 0.4rem',
+              borderRadius: '0.25rem',
+            }}>
+              {query.length} ch
+            </span>
+          )}
+        </div>
+      </div>
     </form>
   );
 }
