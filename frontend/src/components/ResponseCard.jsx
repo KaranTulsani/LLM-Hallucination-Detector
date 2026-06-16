@@ -73,6 +73,94 @@ export default function ResponseCard({
   const circumference = 2 * Math.PI * radius;
   const strokeOffset = config ? circumference - (finalScore / 100) * circumference : circumference;
 
+  // Compile unique sources and index mapping
+  const citations = scoreData?.citations || {};
+  const uniqueSources = [];
+  const claimMappings = [];
+
+  const getSourceIndex = (url, title) => {
+    let idx = uniqueSources.findIndex((s) => s.url === url);
+    if (idx === -1) {
+      uniqueSources.push({ url, title });
+      idx = uniqueSources.length - 1;
+    }
+    return idx + 1;
+  };
+
+  for (const [claim, refs] of Object.entries(citations)) {
+    const indices = refs.map((r) => getSourceIndex(r.url, r.title));
+    if (indices.length > 0) {
+      claimMappings.push({ claim, indices });
+    }
+  }
+
+  // Sort claims by length descending to match longest matches first
+  claimMappings.sort((a, b) => b.claim.length - a.claim.length);
+
+  // Helper to render text with inline claims and footnote indices
+  const renderTextWithFootnotes = (text) => {
+    if (!text || claimMappings.length === 0) {
+      return text;
+    }
+
+    let parts = [{ text: text, isClaim: false, indices: [] }];
+
+    for (const mapping of claimMappings) {
+      const nextParts = [];
+      for (const part of parts) {
+        if (part.isClaim) {
+          nextParts.push(part);
+          continue;
+        }
+
+        const index = part.text.toLowerCase().indexOf(mapping.claim.toLowerCase());
+        if (index !== -1) {
+          const before = part.text.slice(0, index);
+          const match = part.text.slice(index, index + mapping.claim.length);
+          const after = part.text.slice(index + mapping.claim.length);
+
+          if (before) nextParts.push({ text: before, isClaim: false, indices: [] });
+          nextParts.push({ text: match, isClaim: true, indices: mapping.indices });
+          if (after) nextParts.push({ text: after, isClaim: false, indices: [] });
+        } else {
+          nextParts.push(part);
+        }
+      }
+      parts = nextParts;
+    }
+
+    return parts.map((part, i) => {
+      if (part.isClaim) {
+        return (
+          <span
+            key={i}
+            style={{
+              borderBottom: '1px dotted rgba(16, 185, 129, 0.4)',
+              background: 'rgba(16, 185, 129, 0.03)',
+              padding: '0 0.15rem',
+              borderRadius: '0.15rem',
+            }}
+          >
+            {part.text}
+            {part.indices.map((idx) => (
+              <sup key={idx} style={{ fontSize: '0.62rem', fontWeight: 700, marginLeft: '0.06rem', verticalAlign: 'super' }}>
+                <a
+                  href={uniqueSources[idx - 1].url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--clr-green)', textDecoration: 'none', padding: '0 0.05rem' }}
+                >
+                  [{idx}]
+                </a>
+              </sup>
+            ))}
+          </span>
+        );
+      }
+      return part.text;
+    });
+  };
+
   return (
     <div
       className="glass-card animate-fade-in-up"
@@ -129,7 +217,7 @@ export default function ResponseCard({
         borderRadius: 'var(--radius)',
         border: '1px solid rgba(255,255,255,0.02)',
       }}>
-        {response}
+        {renderTextWithFootnotes(response)}
       </div>
 
       {/* ── Gauge score & Metadata Section ─────────────────── */}
@@ -148,14 +236,12 @@ export default function ResponseCard({
           {/* Radial score gauge */}
           <div className="circular-progress" style={{ width: '80px', height: '80px' }}>
             <svg width="80" height="80" viewBox="0 0 100 100">
-              {/* Background Circle */}
               <circle
                 className="circular-bg"
                 cx="50"
                 cy="50"
                 r={radius}
               />
-              {/* Highlight Circle */}
               <circle
                 className="circular-fg"
                 cx="50"
@@ -515,7 +601,7 @@ export default function ResponseCard({
         </div>
       )}
 
-      {/* ── Corrected response accordion ──────────────────────── */}
+      {/* ── Corrected response Output ───────────────────────── */}
       {correctedResponse && (
         <div className="animate-fade-in-up" style={{
           padding: '1.25rem',
@@ -545,8 +631,55 @@ export default function ResponseCard({
             color: 'var(--clr-text)',
             whiteSpace: 'pre-wrap',
           }}>
-            {correctedResponse}
+            {renderTextWithFootnotes(correctedResponse)}
           </p>
+        </div>
+      )}
+
+      {/* ── References & Sources Panel ───────────────────────── */}
+      {uniqueSources.length > 0 && (
+        <div style={{
+          marginTop: '1.5rem',
+          paddingTop: '1rem',
+          borderTop: '1px solid var(--clr-border)',
+        }}>
+          <div style={{
+            fontSize: '0.72rem',
+            color: 'var(--clr-text-muted)',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '0.5rem',
+            fontFamily: 'var(--font-display)',
+          }}>
+            Verified References & Citations
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            {uniqueSources.map((src, i) => {
+              let hostname = "";
+              try {
+                hostname = new URL(src.url).hostname;
+              } catch (e) {
+                hostname = src.url;
+              }
+              return (
+                <div key={i} style={{ fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span style={{ color: 'var(--clr-green)', fontWeight: 700 }}>[{i + 1}]</span>
+                  <a
+                    href={src.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'var(--clr-text-dim)', textDecoration: 'underline' }}
+                  >
+                    {src.title}
+                  </a>
+                  <span style={{ color: 'var(--clr-text-muted)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)' }}>
+                    ({hostname})
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

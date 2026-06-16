@@ -58,6 +58,15 @@ export default function App() {
 
   const handleSubmit = async (query, autoFix = false) => {
     const id = Date.now();
+    
+    // Compile history
+    const history = messages
+      .filter((m) => !m.loading && m.response)
+      .flatMap((m) => [
+        { role: 'user', content: m.query },
+        { role: 'assistant', content: m.corrected || m.response },
+      ]);
+
     setMessages((prev) => [
       ...prev,
       { id, query, response: null, scoreData: null, detectors: null, corrected: null, loading: true },
@@ -68,7 +77,7 @@ export default function App() {
     setLoadingStep('Generating LLM response...');
     
     try {
-      const stream = chatStreamWithDetection(query, null, autoFix);
+      const stream = chatStreamWithDetection(query, null, autoFix, history.length > 0 ? history : null);
       
       for await (const data of stream) {
         if (data.chunk !== undefined) {

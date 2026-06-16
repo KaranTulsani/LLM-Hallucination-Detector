@@ -90,6 +90,7 @@ class AggregatedScore:
     penalties: list[str] = field(default_factory=list)
     is_trustworthy: bool = True
     threshold_used: float = 65.0
+    citations: dict[str, list[dict[str, str]]] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return {
@@ -101,6 +102,7 @@ class AggregatedScore:
             "penalties": self.penalties,
             "is_trustworthy": self.is_trustworthy,
             "threshold_used": self.threshold_used,
+            "citations": self.citations,
         }
 
 
@@ -137,11 +139,14 @@ class ScoreAggregator:
         penalties: list[str] = []
 
         # Collect sub-scores
+        citations: dict[str, list[dict[str, str]]] = {}
         for r in results:
             sub_scores[r.name] = r.score
             all_verified.extend(r.verified_claims)
             all_unverified.extend(r.unverified_claims)
             all_evidence.extend(r.evidence)
+            if r.metadata and "citations" in r.metadata:
+                citations.update(r.metadata["citations"])
 
         # Weighted sum — only include detectors that actually ran
         active_weights = {
@@ -258,4 +263,5 @@ class ScoreAggregator:
             penalties=penalties,
             is_trustworthy=final >= self.threshold,
             threshold_used=self.threshold,
+            citations=citations,
         )

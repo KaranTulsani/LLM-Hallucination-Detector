@@ -84,7 +84,7 @@ class WebSearchRetriever:
         self._num_results = num_results
         self._http_client = http_client
 
-    async def search(self, query: str) -> list[str]:
+    async def search(self, query: str) -> list[dict[str, str]]:
         """Return a list of text snippets from the top organic results."""
         headers = {
             "X-API-KEY": self._api_key,
@@ -103,32 +103,50 @@ class WebSearchRetriever:
                     resp.raise_for_status()
                     data: dict[str, Any] = resp.json()
         except Exception as exc:
-            # Network error, bad key, rate limit — degrade gracefully
-            return [f"[Web search failed: {exc}]"]
+            return [{
+                "text": f"[Web search failed: {exc}]",
+                "title": "Search Failed",
+                "link": "https://google.com"
+            }]
 
-        snippets: list[str] = []
+        results: list[dict[str, str]] = []
 
         # Answer box (direct answer) — highest signal
         if answer_box := data.get("answerBox"):
             for key in ("answer", "snippet", "snippetHighlighted"):
                 if text := answer_box.get(key):
-                    if isinstance(text, list):
-                        snippets.extend(text)
-                    else:
-                        snippets.append(str(text))
+                    txt = text if isinstance(text, str) else " ".join(text)
+                    results.append({
+                        "text": txt,
+                        "title": "Google Answer Box",
+                        "link": answer_box.get("link", "https://google.com")
+                    })
 
         # Knowledge graph snippet
         if kg := data.get("knowledgeGraph"):
             if desc := kg.get("description"):
-                snippets.append(desc)
+                results.append({
+                    "text": desc,
+                    "title": kg.get("title", "Google Knowledge Graph"),
+                    "link": kg.get("link", "https://google.com")
+                })
 
         # Organic results
         for result in data.get("organic", [])[: self._num_results]:
             if snippet := result.get("snippet"):
-                title = result.get("title", "")
-                snippets.append(f"{title}: {snippet}" if title else snippet)
+                title = result.get("title", "Search Result")
+                link = result.get("link", "https://google.com")
+                results.append({
+                    "text": f"{title}: {snippet}" if title else snippet,
+                    "title": title,
+                    "link": link
+                })
 
-        return snippets or ["[No web results returned]"]
+        return results or [{
+            "text": "[No web results returned]",
+            "title": "No Results",
+            "link": "https://google.com"
+        }]
 
 
 # ── Detector ─────────────────────────────────────────────────────────────────
@@ -200,16 +218,24 @@ class RAGGroundingDetector(BaseDetector):
 
         # Step 2 — search the web for each claim (concurrently)
         search_tasks = [self._retriever.search(claim) for claim in claims]
-        per_claim_snippets: list[list[str]] = await asyncio.gather(*search_tasks)
+        per_claim_results: list[list[dict[str, str]]] = await asyncio.gather(*search_tasks)
 
-        # Flatten into a deduplicated list (preserving order)
+        # Map claims to citation URLs
+        claim_citations: dict[str, list[dict[str, str]]] = {}
+        for claim, results in zip(claims, per_claim_results):
+            claim_citations[claim] = [
+                {"title": r["title"], "url": r["link"]}
+                for r in results[:2] if r["link"]
+            ]
+
+        # Flatten into a deduplicated list (preserving order) of text snippets for context
         seen: set[str] = set()
         all_snippets: list[str] = []
-        for snippets in per_claim_snippets:
-            for s in snippets[:2]:  # take top 2 snippets per claim to prevent cutoff
-                if s not in seen:
-                    seen.add(s)
-                    all_snippets.append(s)
+        for results in per_claim_results:
+            for r in results[:2]:  # take top 2 snippets per claim to prevent cutoff
+                if r["text"] not in seen:
+                    seen.add(r["text"])
+                    all_snippets.append(r["text"])
 
         return await self._verify_against_docs(
             query,
@@ -217,6 +243,7 @@ class RAGGroundingDetector(BaseDetector):
             all_snippets,
             source="web_search",
             pre_extracted_claims=claims,
+            claim_citations=claim_citations,
         )
 
     # ── internals ────────────────────────────────────────────────────────────
@@ -228,6 +255,7 @@ class RAGGroundingDetector(BaseDetector):
         docs: list[str],
         source: str = "web_search",
         pre_extracted_claims: list[str] | None = None,
+        claim_citations: dict[str, list[dict[str, str]]] | None = None,
     ) -> DetectorResult:
         """Ask the LLM to verify claims against reference documents/snippets."""
 
@@ -310,6 +338,16 @@ class RAGGroundingDetector(BaseDetector):
             for v in verdicts
         ]
 
+        # Compile citations dictionary for verified claims
+        citations = {}
+        if claim_citations:
+            for v in verdicts:
+                verdict_str = v.get("verdict")
+                if verdict_str in ("supported", "partially_supported"):
+                    c_text = v.get("claim", "")
+                    if c_text in claim_citations:
+                        citations[c_text] = claim_citations[c_text]
+
         return DetectorResult(
             name=self.name,
             score=grounding_score,
@@ -324,6 +362,7 @@ class RAGGroundingDetector(BaseDetector):
                 "partially_supported": len(partial),
                 "contradicted": len(contradicted),
                 "not_found": len(not_found),
+                "citations": citations,
             },
         )
 

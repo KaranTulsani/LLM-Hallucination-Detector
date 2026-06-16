@@ -37,7 +37,7 @@ export async function chatWithDetection(query, contextDocs = null, autoFix = fal
 /**
  * Full chat flow using SSE for streaming generation, then detection.
  */
-export async function* chatStreamWithDetection(query, contextDocs = null, autoFix = false) {
+export async function* chatStreamWithDetection(query, contextDocs = null, autoFix = false, history = null) {
   const res = await fetch(`${API_BASE}/chat/stream`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -45,6 +45,7 @@ export async function* chatStreamWithDetection(query, contextDocs = null, autoFi
       query,
       context_docs: contextDocs,
       auto_fix: autoFix,
+      history,
     }),
   });
 

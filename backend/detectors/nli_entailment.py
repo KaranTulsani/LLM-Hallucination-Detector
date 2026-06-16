@@ -50,6 +50,25 @@ _EXTRACT_CLAIMS_PROMPT = (
     'Return ONLY a JSON object: {"claims": ["claim 1", "claim 2", ...]}'
 )
 
+# ── Local NLI Fallback Prompt ──────────────────────────────────────────────────
+
+_NLI_SYSTEM_PROMPT = """\
+You are an advanced Natural Language Inference (NLI) classifier.
+Your job is to determine the logical relationship between a Premise and a Hypothesis.
+
+Classify the relationship into one of the following exact categories:
+- "entailment"    (the Premise logically implies or guarantees that the Hypothesis is true)
+- "contradiction" (the Premise logically contradicts or rules out the Hypothesis)
+- "neutral"       (the Premise does not give enough information to confirm or deny the Hypothesis)
+
+Return ONLY a JSON object with this exact schema:
+{
+  "relationship": "entailment|neutral|contradiction",
+  "confidence": <float between 0 and 1 representing your classification confidence>
+}
+
+Be strict and precise. Do not output any prose, markdown code fences, or explanations."""
+
 
 class NLIEntailmentDetector(BaseDetector):
     """Non-LLM hallucination signal via natural language inference."""
@@ -75,18 +94,6 @@ class NLIEntailmentDetector(BaseDetector):
         response: str,
         context_docs: list[str] | None = None,
     ) -> DetectorResult:
-        if not self._hf_key:
-            return DetectorResult(
-                name=self.name,
-                score=0.5,
-                evidence=[
-                    "HF_API_KEY not configured — NLI entailment check skipped.",
-                    "Score defaulted to 0.5 (unverifiable).",
-                    "Set HF_API_KEY in backend/.env to enable NLI grounding.",
-                ],
-                metadata={"configured": False},
-            )
-
         # Step 1 — extract claims
         claims = await self._extract_claims(response)
         if not claims:
@@ -94,7 +101,7 @@ class NLIEntailmentDetector(BaseDetector):
                 name=self.name,
                 score=0.7,
                 evidence=["No factual claims extracted from response."],
-                metadata={"claims_extracted": 0},
+                metadata={"claims_extracted": 0, "fallback_active": not self._hf_key},
             )
 
         # Step 2 — classify each claim in parallel against the premise (context docs if available)
@@ -113,11 +120,14 @@ class NLIEntailmentDetector(BaseDetector):
         else:
             premise = query
 
-        sem = asyncio.Semaphore(2)  # Limit concurrency to 2 to prevent Hugging Face rate limits/hangs
+        sem = asyncio.Semaphore(2)  # Limit concurrency to 2 to prevent rate limits/hangs
 
         async def sem_classify(p, h):
             async with sem:
-                return await self._classify(p, h)
+                if self._hf_key:
+                    return await self._classify(p, h)
+                else:
+                    return await self._classify_llm(p, h)
 
         tasks = [sem_classify(premise, claim) for claim in claims]
         verdicts: list[dict[str, Any]] = await asyncio.gather(*tasks)
@@ -157,11 +167,12 @@ class NLIEntailmentDetector(BaseDetector):
             unverified_claims=unverified,
             evidence=evidence_lines,
             metadata={
-                "model": _HF_MODEL,
+                "model": _HF_MODEL if self._hf_key else self.llm.model,
                 "claims_extracted": len(claims),
                 "entailed": len(verified),
                 "contradicted": len(unverified),
                 "neutral": len(claims) - len(verified) - len(unverified),
+                "fallback_active": not self._hf_key,
             },
         )
 
@@ -242,6 +253,37 @@ class NLIEntailmentDetector(BaseDetector):
             }
 
         return {"label": "neutral", "score": 0.0, "error": "Unexpected API response format"}
+
+    async def _classify_llm(self, premise: str, hypothesis: str) -> dict[str, Any]:
+        """Fallback NLI classifier using the fast LLM model."""
+        user_msg = (
+            f"**Premise:** {premise}\n\n"
+            f"**Hypothesis:** {hypothesis}"
+        )
+        try:
+            result = await asyncio.to_thread(
+                self.llm.chat_json,
+                [
+                    {"role": "system", "content": _NLI_SYSTEM_PROMPT},
+                    {"role": "user", "content": user_msg},
+                ],
+                temperature=0.0,
+            )
+            
+            if result.get("parse_error"):
+                return {"label": "neutral", "score": 0.0, "error": "LLM classification parsing failed."}
+                
+            label = str(result.get("relationship", "neutral")).strip().lower()
+            if label not in _LABELS:
+                label = "neutral"
+                
+            confidence = float(result.get("confidence", 0.5))
+            return {
+                "label": label,
+                "score": confidence,
+            }
+        except Exception as exc:
+            return {"label": "neutral", "score": 0.0, "error": str(exc)}
 
     async def _extract_claims(self, text: str) -> list[str]:
         """Extract atomic factual claims from the response."""

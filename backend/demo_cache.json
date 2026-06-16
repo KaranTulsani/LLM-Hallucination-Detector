@@ -853,5 +853,525 @@
     ],
     "was_corrected": false,
     "corrected_response": null
+  },
+  "chat_8f2e4b6c9d774de4d1ef5731224de982143500e6b5da3ea8bc969e6b600e4ca6": {
+    "query": "Explain the safety of honey bee venom.",
+    "response": "Honey bee venom, also known as apitoxin, is a complex mixture of bioactive compounds that can have both therapeutic and toxic effects on humans. While it's true that bee stings can be painful and potentially life-threatening for some individuals, the safety of honey bee venom is a topic of ongoing research and debate.\n\n**Components of honey bee venom:**\n\nHoney bee venom contains a variety of compounds, including:\n\n1. Melittin: a peptide that makes up about 50% of the venom and is responsible for its analgesic, anti-inflammatory, and antiviral properties.\n2. Phospholipase A2 (PLA2): an enzyme that breaks down cell membranes and contributes to the venom's toxic effects.\n3. Histamine: a neurotransmitter that can cause allergic reactions and anaphylaxis.\n4. Acetylcholine: a neurotransmitter that can stimulate muscle contractions and other physiological responses.\n5. Adolapin: a compound with anti-inflammatory and antiviral properties.\n\n**Therapeutic applications:**\n\nHoney bee venom has been used in traditional medicine for centuries to treat various conditions, including:\n\n1. Arthritis and joint pain: melittin has anti-inflammatory properties that may help reduce pain and inflammation.\n2. Allergies: some studies suggest that bee venom immunotherapy can help desensitize individuals to specific allergens.\n3. Cancer: melittin has been shown to have antitumor effects in some studies.\n4. Neurological disorders: bee venom has been investigated as a potential treatment for conditions such as Parkinson's disease and multiple sclerosis.\n\n**Safety concerns:**\n\nWhile honey bee venom has potential therapeutic applications, it's essential to note that:\n\n1. **Anaphylaxis:** bee stings can cause severe allergic reactions, including anaphylaxis, which can be life-threatening.\n2. **Toxicity:** the venom can cause local pain, swelling, and redness, as well as systemic effects such as fever and nausea.\n3. **Immunological responses:** repeated exposure to bee venom can lead to the development of antibodies, which may exacerbate allergic reactions.\n\n**Precautions and guidelines:**\n\nIf you're considering using honey bee venom for therapeutic purposes, it's essential to:\n\n1. Consult with a healthcare professional or a qualified beekeeper.\n2. Follow proper handling and preparation procedures to minimize the risk of allergic reactions.\n3. Start with small doses and gradually increase the amount under medical supervision.\n4. Be aware of potential interactions with other medications or health conditions.\n\nIn summary, while honey bee venom has potential therapeutic applications, its safety depends on proper handling, preparation, and administration. Individuals with allergies or other health conditions should exercise caution and consult with a healthcare professional before using bee venom for therapeutic purposes.",
+    "score": {
+      "final_score": 54.8,
+      "sub_scores": {
+        "semantic_entropy": 0.4976,
+        "llm_judge": 0.555,
+        "rag_grounding": 0.53,
+        "nli_entailment": 0.85
+      },
+      "verified_claims": [
+        "Honey bee venom is a complex mixture of bioactive compounds",
+        "Melittin is a peptide that makes up about 50% of the venom and is responsible for its analgesic, anti-inflammatory, and antiviral properties",
+        "Bee stings can cause severe allergic reactions, including anaphylaxis",
+        "Anaphylaxis is a life-threatening condition that requires emergency treatment",
+        "Bee stings can be painful and potentially life-threatening for some individuals.",
+        "The safety of honey bee venom is a topic of ongoing research and debate.",
+        "Melittin makes up about 50% of the venom and has analgesic, anti-inflammatory, and antiviral properties.",
+        "Melittin has anti-inflammatory properties that may help reduce pain and inflammation.",
+        "Anaphylaxis is a severe allergic reaction that can be life-threatening.",
+        "Phospholipase A2 breaks down cell membranes and contributes to the venom's toxic effects.",
+        "Melittin has been shown to have antitumor effects in some studies."
+      ],
+      "unverified_claims": [
+        "Melittin has antitumor effects",
+        "Bee venom has been investigated as a potential treatment for conditions such as Parkinson's disease and multiple sclerosis",
+        "Bee venom immunotherapy can help desensitize individuals to specific allergens",
+        "Acetylcholine can stimulate muscle contractions and other physiological responses.",
+        "Adolapin has anti-inflammatory and antiviral properties.",
+        "Honey bee venom has been used in traditional medicine for centuries.",
+        "The venom can cause local pain, swelling, and redness, as well as systemic effects such as fever and nausea.",
+        "Repeated exposure to bee venom can lead to the development of antibodies.",
+        "Antibodies may exacerbate allergic reactions.",
+        "Proper handling and preparation procedures can minimize the risk of allergic reactions.",
+        "Small doses of bee venom should be started under medical supervision.",
+        "Potential interactions with other medications or health conditions should be considered."
+      ],
+      "evidence": [
+        "Generated 3 alternative responses.",
+        "Average pairwise cosine similarity: 0.759",
+        "Judge confidence: 0.70",
+        "Verified: 5, Unverified: 3",
+        "Overconfidence flags: ['Honey bee venom has potential therapeutic applications', 'The safety of honey bee venom depends on proper handling, preparation, and administration']",
+        "Honey bee venom is a complex mixture of bioactive compounds. → supported (web evidence: Bee venom is defined as a complex mixture of bioactive components, including peptides like melittin, which is isolated from the venom and is known for its membrane lytic and fusogenic effects, as well as its role in peptide–membrane interactions.)",
+        "Bee stings can be painful and potentially life-threatening for some individuals. → supported (web evidence: A severe reaction to a bee sting is potentially life-threatening and requires emergency treatment. This type of reaction is called anaphylaxis.)",
+        "The safety of honey bee venom is a topic of ongoing research and debate. → supported (web evidence: Despite its long history and growing interest, scientific evidence supporting the efficacy of bee venom is inconclusive, with mixed results from clinical studies. Safety is a significant consideration, as bee venom can trigger severe allergic reactions, including anaphylaxis.)",
+        "Melittin makes up about 50% of the venom and has analgesic, anti-inflammatory, and antiviral properties. → supported (web evidence: Bee venom (BV) is a multifaceted biological complex of highly active therapeutic peptides and enzymes. The major constituent, melittin, constitutes nearly half of the dry venom and possesses various pharmacological activities, including anticancer, antimicrobial, and anti-inflammatory effects.)",
+        "Phospholipase A2 breaks down cell membranes and contributes to the venom's toxic effects. → partially_supported (web evidence: Upon snakebite envenomation, svPLA2s hydrolyze cell membrane phospholipids and induce pathological effects such as paralysis, myonecrosis, inflammation, or pain.)",
+        "Histamine can cause allergic reactions and anaphylaxis. → not_found (web evidence: )",
+        "Acetylcholine can stimulate muscle contractions and other physiological responses. → not_found (web evidence: )",
+        "Adolapin has anti-inflammatory and antiviral properties. → not_found (web evidence: )",
+        "Honey bee venom has been used in traditional medicine for centuries. → not_found (web evidence: )",
+        "Melittin has anti-inflammatory properties that may help reduce pain and inflammation. → supported (web evidence: Bee venom (BV) is a multifaceted biological complex of highly active therapeutic peptides and enzymes. The major constituent, melittin, constitutes nearly half of the dry venom and possesses various pharmacological activities, including anticancer, antimicrobial, and anti-inflammatory effects.)",
+        "Bee venom immunotherapy can help desensitize individuals to specific allergens. → not_found (web evidence: )",
+        "Melittin has been shown to have antitumor effects in some studies. → partially_supported (web evidence: Bee venom (BV) is a multifaceted biological complex of highly active therapeutic peptides and enzymes. The major constituent, melittin, constitutes nearly half of the dry venom and possesses various pharmacological activities, including anticancer, antimicrobial, and anti-inflammatory effects.)",
+        "Bee venom has been investigated as a potential treatment for conditions such as Parkinson's disease and multiple sclerosis. → not_found (web evidence: )",
+        "Anaphylaxis is a severe allergic reaction that can be life-threatening. → supported (web evidence: A severe reaction to a bee sting is potentially life-threatening and requires emergency treatment. This type of reaction is called anaphylaxis.)",
+        "The venom can cause local pain, swelling, and redness, as well as systemic effects such as fever and nausea. → not_found (web evidence: )",
+        "Repeated exposure to bee venom can lead to the development of antibodies. → not_found (web evidence: )",
+        "Antibodies may exacerbate allergic reactions. → not_found (web evidence: )",
+        "Proper handling and preparation procedures can minimize the risk of allergic reactions. → not_found (web evidence: )",
+        "Small doses of bee venom should be started under medical supervision. → not_found (web evidence: )",
+        "Potential interactions with other medications or health conditions should be considered. → not_found (web evidence: )",
+        "Honey bee venom is a complex mixture of bioactive compounds. → entailment (51% confidence)",
+        "Bee stings can be painful and potentially life-threatening for some individuals. → entailment (63% confidence)",
+        "The safety of honey bee venom is a topic of ongoing research and debate. → neutral (48% confidence)",
+        "Melittin makes up about 50% of the venom and has analgesic, anti-inflammatory, and antiviral properties. → entailment (59% confidence)",
+        "Phospholipase A2 breaks down cell membranes and contributes to the venom's toxic effects. → entailment (61% confidence)",
+        "Histamine can cause allergic reactions and anaphylaxis. → entailment (62% confidence)",
+        "Acetylcholine can stimulate muscle contractions and other physiological responses. → entailment (71% confidence)",
+        "Adolapin has anti-inflammatory and antiviral properties. → entailment (73% confidence)",
+        "Honey bee venom has been used in traditional medicine for centuries. → entailment (58% confidence)",
+        "Melittin has anti-inflammatory properties that may help reduce pain and inflammation. → entailment (67% confidence)",
+        "Bee venom immunotherapy can help desensitize individuals to specific allergens. → neutral (47% confidence)",
+        "Melittin has been shown to have antitumor effects in some studies. → entailment (68% confidence)",
+        "Bee venom has been investigated as a potential treatment for conditions such as Parkinson's disease and multiple sclerosis. → entailment (52% confidence)",
+        "Anaphylaxis is a severe allergic reaction that can be life-threatening. → entailment (67% confidence)",
+        "The venom can cause local pain, swelling, and redness, as well as systemic effects such as fever and nausea. → neutral (47% confidence)",
+        "Repeated exposure to bee venom can lead to the development of antibodies. → entailment (73% confidence)",
+        "Antibodies may exacerbate allergic reactions. → entailment (69% confidence)",
+        "Proper handling and preparation procedures can minimize the risk of allergic reactions. → neutral (45% confidence)",
+        "Small doses of bee venom should be started under medical supervision. → entailment (54% confidence)",
+        "Potential interactions with other medications or health conditions should be considered. → neutral (49% confidence)"
+      ],
+      "penalties": [
+        "Length mismatch: unusually long response (-3)"
+      ],
+      "is_trustworthy": false,
+      "threshold_used": 65.0
+    },
+    "detectors": [
+      {
+        "name": "semantic_entropy",
+        "score": 0.4976,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "Generated 3 alternative responses.",
+          "Average pairwise cosine similarity: 0.759"
+        ],
+        "metadata": {
+          "n_samples": 3,
+          "avg_pairwise_similarity": 0.7592,
+          "min_pairwise_similarity": 0.7232,
+          "max_pairwise_similarity": 0.7879
+        }
+      },
+      {
+        "name": "llm_judge",
+        "score": 0.555,
+        "verified_claims": [
+          "Honey bee venom is a complex mixture of bioactive compounds",
+          "Melittin is a peptide that makes up about 50% of the venom and is responsible for its analgesic, anti-inflammatory, and antiviral properties",
+          "Bee stings can cause severe allergic reactions, including anaphylaxis",
+          "Anaphylaxis is a life-threatening condition that requires emergency treatment",
+          "Honey bee venom has been used in traditional medicine for centuries"
+        ],
+        "unverified_claims": [
+          "Melittin has antitumor effects",
+          "Bee venom has been investigated as a potential treatment for conditions such as Parkinson's disease and multiple sclerosis",
+          "Bee venom immunotherapy can help desensitize individuals to specific allergens"
+        ],
+        "evidence": [
+          "Judge confidence: 0.70",
+          "Verified: 5, Unverified: 3",
+          "Overconfidence flags: ['Honey bee venom has potential therapeutic applications', 'The safety of honey bee venom depends on proper handling, preparation, and administration']"
+        ],
+        "metadata": {
+          "raw_confidence": 0.7,
+          "claim_ratio": 0.625,
+          "fabricated_citations": [],
+          "overconfidence_flags": [
+            "Honey bee venom has potential therapeutic applications",
+            "The safety of honey bee venom depends on proper handling, preparation, and administration"
+          ]
+        }
+      },
+      {
+        "name": "rag_grounding",
+        "score": 0.53,
+        "verified_claims": [
+          "Honey bee venom is a complex mixture of bioactive compounds.",
+          "Bee stings can be painful and potentially life-threatening for some individuals.",
+          "The safety of honey bee venom is a topic of ongoing research and debate.",
+          "Melittin makes up about 50% of the venom and has analgesic, anti-inflammatory, and antiviral properties.",
+          "Melittin has anti-inflammatory properties that may help reduce pain and inflammation.",
+          "Anaphylaxis is a severe allergic reaction that can be life-threatening.",
+          "Phospholipase A2 breaks down cell membranes and contributes to the venom's toxic effects.",
+          "Melittin has been shown to have antitumor effects in some studies."
+        ],
+        "unverified_claims": [
+          "Histamine can cause allergic reactions and anaphylaxis.",
+          "Acetylcholine can stimulate muscle contractions and other physiological responses.",
+          "Adolapin has anti-inflammatory and antiviral properties.",
+          "Honey bee venom has been used in traditional medicine for centuries.",
+          "Bee venom immunotherapy can help desensitize individuals to specific allergens.",
+          "Bee venom has been investigated as a potential treatment for conditions such as Parkinson's disease and multiple sclerosis.",
+          "The venom can cause local pain, swelling, and redness, as well as systemic effects such as fever and nausea.",
+          "Repeated exposure to bee venom can lead to the development of antibodies.",
+          "Antibodies may exacerbate allergic reactions.",
+          "Proper handling and preparation procedures can minimize the risk of allergic reactions.",
+          "Small doses of bee venom should be started under medical supervision.",
+          "Potential interactions with other medications or health conditions should be considered."
+        ],
+        "evidence": [
+          "Honey bee venom is a complex mixture of bioactive compounds. → supported (web evidence: Bee venom is defined as a complex mixture of bioactive components, including peptides like melittin, which is isolated from the venom and is known for its membrane lytic and fusogenic effects, as well as its role in peptide–membrane interactions.)",
+          "Bee stings can be painful and potentially life-threatening for some individuals. → supported (web evidence: A severe reaction to a bee sting is potentially life-threatening and requires emergency treatment. This type of reaction is called anaphylaxis.)",
+          "The safety of honey bee venom is a topic of ongoing research and debate. → supported (web evidence: Despite its long history and growing interest, scientific evidence supporting the efficacy of bee venom is inconclusive, with mixed results from clinical studies. Safety is a significant consideration, as bee venom can trigger severe allergic reactions, including anaphylaxis.)",
+          "Melittin makes up about 50% of the venom and has analgesic, anti-inflammatory, and antiviral properties. → supported (web evidence: Bee venom (BV) is a multifaceted biological complex of highly active therapeutic peptides and enzymes. The major constituent, melittin, constitutes nearly half of the dry venom and possesses various pharmacological activities, including anticancer, antimicrobial, and anti-inflammatory effects.)",
+          "Phospholipase A2 breaks down cell membranes and contributes to the venom's toxic effects. → partially_supported (web evidence: Upon snakebite envenomation, svPLA2s hydrolyze cell membrane phospholipids and induce pathological effects such as paralysis, myonecrosis, inflammation, or pain.)",
+          "Histamine can cause allergic reactions and anaphylaxis. → not_found (web evidence: )",
+          "Acetylcholine can stimulate muscle contractions and other physiological responses. → not_found (web evidence: )",
+          "Adolapin has anti-inflammatory and antiviral properties. → not_found (web evidence: )",
+          "Honey bee venom has been used in traditional medicine for centuries. → not_found (web evidence: )",
+          "Melittin has anti-inflammatory properties that may help reduce pain and inflammation. → supported (web evidence: Bee venom (BV) is a multifaceted biological complex of highly active therapeutic peptides and enzymes. The major constituent, melittin, constitutes nearly half of the dry venom and possesses various pharmacological activities, including anticancer, antimicrobial, and anti-inflammatory effects.)",
+          "Bee venom immunotherapy can help desensitize individuals to specific allergens. → not_found (web evidence: )",
+          "Melittin has been shown to have antitumor effects in some studies. → partially_supported (web evidence: Bee venom (BV) is a multifaceted biological complex of highly active therapeutic peptides and enzymes. The major constituent, melittin, constitutes nearly half of the dry venom and possesses various pharmacological activities, including anticancer, antimicrobial, and anti-inflammatory effects.)",
+          "Bee venom has been investigated as a potential treatment for conditions such as Parkinson's disease and multiple sclerosis. → not_found (web evidence: )",
+          "Anaphylaxis is a severe allergic reaction that can be life-threatening. → supported (web evidence: A severe reaction to a bee sting is potentially life-threatening and requires emergency treatment. This type of reaction is called anaphylaxis.)",
+          "The venom can cause local pain, swelling, and redness, as well as systemic effects such as fever and nausea. → not_found (web evidence: )",
+          "Repeated exposure to bee venom can lead to the development of antibodies. → not_found (web evidence: )",
+          "Antibodies may exacerbate allergic reactions. → not_found (web evidence: )",
+          "Proper handling and preparation procedures can minimize the risk of allergic reactions. → not_found (web evidence: )",
+          "Small doses of bee venom should be started under medical supervision. → not_found (web evidence: )",
+          "Potential interactions with other medications or health conditions should be considered. → not_found (web evidence: )"
+        ],
+        "metadata": {
+          "source": "context_docs",
+          "docs_retrieved": 40,
+          "claims_extracted": 20,
+          "supported": 6,
+          "partially_supported": 2,
+          "contradicted": 0,
+          "not_found": 12
+        }
+      },
+      {
+        "name": "nli_entailment",
+        "score": 0.85,
+        "verified_claims": [
+          "Honey bee venom is a complex mixture of bioactive compounds.",
+          "Bee stings can be painful and potentially life-threatening for some individuals.",
+          "Melittin makes up about 50% of the venom and has analgesic, anti-inflammatory, and antiviral properties.",
+          "Phospholipase A2 breaks down cell membranes and contributes to the venom's toxic effects.",
+          "Histamine can cause allergic reactions and anaphylaxis.",
+          "Acetylcholine can stimulate muscle contractions and other physiological responses.",
+          "Adolapin has anti-inflammatory and antiviral properties.",
+          "Honey bee venom has been used in traditional medicine for centuries.",
+          "Melittin has anti-inflammatory properties that may help reduce pain and inflammation.",
+          "Melittin has been shown to have antitumor effects in some studies.",
+          "Bee venom has been investigated as a potential treatment for conditions such as Parkinson's disease and multiple sclerosis.",
+          "Anaphylaxis is a severe allergic reaction that can be life-threatening.",
+          "Repeated exposure to bee venom can lead to the development of antibodies.",
+          "Antibodies may exacerbate allergic reactions.",
+          "Small doses of bee venom should be started under medical supervision."
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "Honey bee venom is a complex mixture of bioactive compounds. → entailment (51% confidence)",
+          "Bee stings can be painful and potentially life-threatening for some individuals. → entailment (63% confidence)",
+          "The safety of honey bee venom is a topic of ongoing research and debate. → neutral (48% confidence)",
+          "Melittin makes up about 50% of the venom and has analgesic, anti-inflammatory, and antiviral properties. → entailment (59% confidence)",
+          "Phospholipase A2 breaks down cell membranes and contributes to the venom's toxic effects. → entailment (61% confidence)",
+          "Histamine can cause allergic reactions and anaphylaxis. → entailment (62% confidence)",
+          "Acetylcholine can stimulate muscle contractions and other physiological responses. → entailment (71% confidence)",
+          "Adolapin has anti-inflammatory and antiviral properties. → entailment (73% confidence)",
+          "Honey bee venom has been used in traditional medicine for centuries. → entailment (58% confidence)",
+          "Melittin has anti-inflammatory properties that may help reduce pain and inflammation. → entailment (67% confidence)",
+          "Bee venom immunotherapy can help desensitize individuals to specific allergens. → neutral (47% confidence)",
+          "Melittin has been shown to have antitumor effects in some studies. → entailment (68% confidence)",
+          "Bee venom has been investigated as a potential treatment for conditions such as Parkinson's disease and multiple sclerosis. → entailment (52% confidence)",
+          "Anaphylaxis is a severe allergic reaction that can be life-threatening. → entailment (67% confidence)",
+          "The venom can cause local pain, swelling, and redness, as well as systemic effects such as fever and nausea. → neutral (47% confidence)",
+          "Repeated exposure to bee venom can lead to the development of antibodies. → entailment (73% confidence)",
+          "Antibodies may exacerbate allergic reactions. → entailment (69% confidence)",
+          "Proper handling and preparation procedures can minimize the risk of allergic reactions. → neutral (45% confidence)",
+          "Small doses of bee venom should be started under medical supervision. → entailment (54% confidence)",
+          "Potential interactions with other medications or health conditions should be considered. → neutral (49% confidence)"
+        ],
+        "metadata": {
+          "model": "facebook/bart-large-mnli",
+          "claims_extracted": 20,
+          "entailed": 15,
+          "contradicted": 0,
+          "neutral": 5
+        }
+      }
+    ],
+    "was_corrected": false,
+    "corrected_response": null
+  },
+  "chat_03218e643ac883734ff8b06a14d6e3e0eadadb08380de81470e5d87fd9156e3f": {
+    "query": "Who is the CEO of Apple Inc.?",
+    "response": "As of my cut-off knowledge in 2023, the CEO of Apple Inc. is Tim Cook. He has been serving as the CEO since August 2011, succeeding Steve Jobs.",
+    "score": {
+      "final_score": 69.0,
+      "sub_scores": {
+        "semantic_entropy": 0.0,
+        "llm_judge": 1.0,
+        "rag_grounding": 1.0,
+        "nli_entailment": 0.2667
+      },
+      "verified_claims": [
+        "The CEO of Apple Inc. is Tim Cook",
+        "He has been serving as the CEO since August 2011",
+        "succeeding Steve Jobs",
+        "Tim Cook has been serving as the CEO of Apple Inc. since August 2011",
+        "Steve Jobs was succeeded by Tim Cook as the CEO of Apple Inc."
+      ],
+      "unverified_claims": [],
+      "evidence": [
+        "Generated 3 alternative responses.",
+        "Average pairwise cosine similarity: 0.483",
+        "Judge confidence: 1.00",
+        "Verified: 3, Unverified: 0",
+        "The CEO of Apple Inc. is Tim Cook → supported (web evidence: Timothy Donald Cook (born November 1, 1960) is an American business executive who has served as the chief executive officer (CEO) of Apple since 2011.)",
+        "Tim Cook has been serving as the CEO of Apple Inc. since August 2011 → supported (web evidence: Timothy Donald Cook (born November 1, 1960) is an American business executive who has served as the chief executive officer (CEO) of Apple since 2011.)",
+        "Steve Jobs was succeeded by Tim Cook as the CEO of Apple Inc. → supported (web evidence: When Steve Jobs handed the CEO role to Tim Cook in August 2011, Jobs died six weeks later.)",
+        "The CEO of Apple Inc. is Tim Cook → contradiction (51% confidence)",
+        "Tim Cook has been serving as the CEO of Apple Inc. since August 2011 → neutral (48% confidence)",
+        "Steve Jobs was succeeded by Tim Cook as the CEO of Apple Inc. → neutral (50% confidence)"
+      ],
+      "penalties": [],
+      "is_trustworthy": true,
+      "threshold_used": 65.0,
+      "citations": {}
+    },
+    "detectors": [
+      {
+        "name": "semantic_entropy",
+        "score": 0.0,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "Generated 3 alternative responses.",
+          "Average pairwise cosine similarity: 0.483"
+        ],
+        "metadata": {
+          "n_samples": 3,
+          "avg_pairwise_similarity": 0.4827,
+          "min_pairwise_similarity": 0.2517,
+          "max_pairwise_similarity": 0.6755
+        }
+      },
+      {
+        "name": "llm_judge",
+        "score": 1.0,
+        "verified_claims": [
+          "The CEO of Apple Inc. is Tim Cook",
+          "He has been serving as the CEO since August 2011",
+          "succeeding Steve Jobs"
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "Judge confidence: 1.00",
+          "Verified: 3, Unverified: 0"
+        ],
+        "metadata": {
+          "raw_confidence": 1.0,
+          "claim_ratio": 1.0,
+          "fabricated_citations": [],
+          "overconfidence_flags": []
+        }
+      },
+      {
+        "name": "rag_grounding",
+        "score": 1.0,
+        "verified_claims": [
+          "The CEO of Apple Inc. is Tim Cook",
+          "Tim Cook has been serving as the CEO of Apple Inc. since August 2011",
+          "Steve Jobs was succeeded by Tim Cook as the CEO of Apple Inc."
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "The CEO of Apple Inc. is Tim Cook → supported (web evidence: Timothy Donald Cook (born November 1, 1960) is an American business executive who has served as the chief executive officer (CEO) of Apple since 2011.)",
+          "Tim Cook has been serving as the CEO of Apple Inc. since August 2011 → supported (web evidence: Timothy Donald Cook (born November 1, 1960) is an American business executive who has served as the chief executive officer (CEO) of Apple since 2011.)",
+          "Steve Jobs was succeeded by Tim Cook as the CEO of Apple Inc. → supported (web evidence: When Steve Jobs handed the CEO role to Tim Cook in August 2011, Jobs died six weeks later.)"
+        ],
+        "metadata": {
+          "source": "context_docs",
+          "docs_retrieved": 6,
+          "claims_extracted": 3,
+          "supported": 3,
+          "partially_supported": 0,
+          "contradicted": 0,
+          "not_found": 0,
+          "citations": {}
+        }
+      },
+      {
+        "name": "nli_entailment",
+        "score": 0.2667,
+        "verified_claims": [],
+        "unverified_claims": [
+          "The CEO of Apple Inc. is Tim Cook"
+        ],
+        "evidence": [
+          "The CEO of Apple Inc. is Tim Cook → contradiction (51% confidence)",
+          "Tim Cook has been serving as the CEO of Apple Inc. since August 2011 → neutral (48% confidence)",
+          "Steve Jobs was succeeded by Tim Cook as the CEO of Apple Inc. → neutral (50% confidence)"
+        ],
+        "metadata": {
+          "model": "facebook/bart-large-mnli",
+          "claims_extracted": 3,
+          "entailed": 0,
+          "contradicted": 1,
+          "neutral": 2,
+          "fallback_active": false
+        }
+      }
+    ],
+    "was_corrected": false,
+    "corrected_response": null
+  },
+  "chat_9278b98a02cf2bae5db680842eedfa6451601a8582730c0028cffe75a21359e6": {
+    "query": "when did he launch the first iphone?",
+    "response": "The first iPhone was announced by Steve Jobs, the co-founder and former CEO of Apple, on January 9, 2007, at the Macworld conference in San Francisco. It was released to the public on June 29, 2007.",
+    "score": {
+      "final_score": 80.6,
+      "sub_scores": {
+        "semantic_entropy": 0.0324,
+        "llm_judge": 1.0,
+        "rag_grounding": 1.0,
+        "nli_entailment": 1.0
+      },
+      "verified_claims": [
+        "The first iPhone was announced by Steve Jobs on January 9, 2007",
+        "It was released to the public on June 29, 2007",
+        "The first iPhone was announced by Steve Jobs.",
+        "Steve Jobs was the co-founder and former CEO of Apple.",
+        "The first iPhone was announced on January 9, 2007.",
+        "The announcement of the first iPhone took place at the Macworld conference.",
+        "The announcement of the first iPhone took place in San Francisco.",
+        "The first iPhone was released to the public on June 29, 2007."
+      ],
+      "unverified_claims": [],
+      "evidence": [
+        "Generated 3 alternative responses.",
+        "Average pairwise cosine similarity: 0.610",
+        "Judge confidence: 1.00",
+        "Verified: 2, Unverified: 0",
+        "The first iPhone was announced by Steve Jobs. → supported (web evidence: This turned out to be the first iPhone (iPhone 2G). On January 9, 2007, Steve Jobs announced the first iPhone at the Macworld convention, receiving substantial media attention.)",
+        "Steve Jobs was the co-founder and former CEO of Apple. → supported (web evidence: Steven Paul Jobs (February 24, 1955 – October 5, 2011) was an American businessman, inventor, and investor. A pioneer of the personal computer revolution of the 1970s and 1980s, Jobs co-founded Apple Inc. with his early business partner Steve Wozniak as Apple Computer Company in 1976.)",
+        "The first iPhone was announced on January 9, 2007. → supported (web evidence: On January 9, 2007, Steve Jobs announced the first iPhone at the Macworld convention, receiving substantial media attention.)",
+        "The announcement of the first iPhone took place at the Macworld conference. → supported (web evidence: On January 9, 2007, Steve Jobs announced the first iPhone at the Macworld convention, receiving substantial media attention.)",
+        "The announcement of the first iPhone took place in San Francisco. → supported (web evidence: Apple's Steve Jobs had unveiled the iPhone to the public on January 9, 2007, at the Macworld 2007 convention at the Moscone Center in San Francisco.)",
+        "The first iPhone was released to the public on June 29, 2007. → supported (web evidence: The iPhone was released in the United States on June 29, 2007, at the price of $499 for the 4 GB model and $599 for the 8 GB model, both requiring a 2-year contract.)",
+        "The first iPhone was announced by Steve Jobs. → entailment (71% confidence)",
+        "Steve Jobs was the co-founder and former CEO of Apple. → entailment (65% confidence)",
+        "The first iPhone was announced on January 9, 2007. → entailment (74% confidence)",
+        "The announcement of the first iPhone took place at the Macworld conference. → entailment (66% confidence)",
+        "The announcement of the first iPhone took place in San Francisco. → entailment (65% confidence)",
+        "The first iPhone was released to the public on June 29, 2007. → entailment (82% confidence)"
+      ],
+      "penalties": [],
+      "is_trustworthy": true,
+      "threshold_used": 65.0,
+      "citations": {}
+    },
+    "detectors": [
+      {
+        "name": "semantic_entropy",
+        "score": 0.0324,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "Generated 3 alternative responses.",
+          "Average pairwise cosine similarity: 0.610"
+        ],
+        "metadata": {
+          "n_samples": 3,
+          "avg_pairwise_similarity": 0.6104,
+          "min_pairwise_similarity": 0.432,
+          "max_pairwise_similarity": 0.8804
+        }
+      },
+      {
+        "name": "llm_judge",
+        "score": 1.0,
+        "verified_claims": [
+          "The first iPhone was announced by Steve Jobs on January 9, 2007",
+          "It was released to the public on June 29, 2007"
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "Judge confidence: 1.00",
+          "Verified: 2, Unverified: 0"
+        ],
+        "metadata": {
+          "raw_confidence": 1.0,
+          "claim_ratio": 1.0,
+          "fabricated_citations": [],
+          "overconfidence_flags": []
+        }
+      },
+      {
+        "name": "rag_grounding",
+        "score": 1.0,
+        "verified_claims": [
+          "The first iPhone was announced by Steve Jobs.",
+          "Steve Jobs was the co-founder and former CEO of Apple.",
+          "The first iPhone was announced on January 9, 2007.",
+          "The announcement of the first iPhone took place at the Macworld conference.",
+          "The announcement of the first iPhone took place in San Francisco.",
+          "The first iPhone was released to the public on June 29, 2007."
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "The first iPhone was announced by Steve Jobs. → supported (web evidence: This turned out to be the first iPhone (iPhone 2G). On January 9, 2007, Steve Jobs announced the first iPhone at the Macworld convention, receiving substantial media attention.)",
+          "Steve Jobs was the co-founder and former CEO of Apple. → supported (web evidence: Steven Paul Jobs (February 24, 1955 – October 5, 2011) was an American businessman, inventor, and investor. A pioneer of the personal computer revolution of the 1970s and 1980s, Jobs co-founded Apple Inc. with his early business partner Steve Wozniak as Apple Computer Company in 1976.)",
+          "The first iPhone was announced on January 9, 2007. → supported (web evidence: On January 9, 2007, Steve Jobs announced the first iPhone at the Macworld convention, receiving substantial media attention.)",
+          "The announcement of the first iPhone took place at the Macworld conference. → supported (web evidence: On January 9, 2007, Steve Jobs announced the first iPhone at the Macworld convention, receiving substantial media attention.)",
+          "The announcement of the first iPhone took place in San Francisco. → supported (web evidence: Apple's Steve Jobs had unveiled the iPhone to the public on January 9, 2007, at the Macworld 2007 convention at the Moscone Center in San Francisco.)",
+          "The first iPhone was released to the public on June 29, 2007. → supported (web evidence: The iPhone was released in the United States on June 29, 2007, at the price of $499 for the 4 GB model and $599 for the 8 GB model, both requiring a 2-year contract.)"
+        ],
+        "metadata": {
+          "source": "context_docs",
+          "docs_retrieved": 11,
+          "claims_extracted": 6,
+          "supported": 6,
+          "partially_supported": 0,
+          "contradicted": 0,
+          "not_found": 0,
+          "citations": {}
+        }
+      },
+      {
+        "name": "nli_entailment",
+        "score": 1.0,
+        "verified_claims": [
+          "The first iPhone was announced by Steve Jobs.",
+          "Steve Jobs was the co-founder and former CEO of Apple.",
+          "The first iPhone was announced on January 9, 2007.",
+          "The announcement of the first iPhone took place at the Macworld conference.",
+          "The announcement of the first iPhone took place in San Francisco.",
+          "The first iPhone was released to the public on June 29, 2007."
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "The first iPhone was announced by Steve Jobs. → entailment (71% confidence)",
+          "Steve Jobs was the co-founder and former CEO of Apple. → entailment (65% confidence)",
+          "The first iPhone was announced on January 9, 2007. → entailment (74% confidence)",
+          "The announcement of the first iPhone took place at the Macworld conference. → entailment (66% confidence)",
+          "The announcement of the first iPhone took place in San Francisco. → entailment (65% confidence)",
+          "The first iPhone was released to the public on June 29, 2007. → entailment (82% confidence)"
+        ],
+        "metadata": {
+          "model": "facebook/bart-large-mnli",
+          "claims_extracted": 6,
+          "entailed": 6,
+          "contradicted": 0,
+          "neutral": 0,
+          "fallback_active": false
+        }
+      }
+    ],
+    "was_corrected": false,
+    "corrected_response": null
   }
 }

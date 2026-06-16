@@ -118,6 +118,9 @@ class ChatRequest(BaseModel):
     auto_fix: bool = Field(
         default=False, description="Automatically fix if below threshold"
     )
+    history: list[dict[str, str]] | None = Field(
+        default=None, description="Previous messages in chat session"
+    )
 
 
 class KBAddRequest(BaseModel):
@@ -172,9 +175,9 @@ async def detect(req: DetectRequest):
             docs = []
             for snippets in per_claim_snippets:
                 for s in snippets[:2]:
-                    if s not in seen_snippets and not s.startswith("[Web search failed:"):
-                        seen_snippets.add(s)
-                        docs.append(s)
+                    if s["text"] not in seen_snippets and not s["text"].startswith("[Web search failed:"):
+                        seen_snippets.add(s["text"])
+                        docs.append(s["text"])
             if docs:
                 context_docs = docs
 
@@ -228,9 +231,14 @@ async def chat(req: ChatRequest):
     if cached:
         return cached
 
-    # Step 1 — Generate response
+    # Step 1 — Generate response (including history context if available)
+    messages = []
+    if req.history:
+        messages.extend(req.history)
+    messages.append({"role": "user", "content": req.query})
+
     generated = await asyncio.to_thread(
-        llm_client.generate_response, req.query
+        llm_client.chat, messages
     )
 
     # Step 2 — Run detection
@@ -256,9 +264,9 @@ async def chat(req: ChatRequest):
             docs = []
             for snippets in per_claim_snippets:
                 for s in snippets[:2]:
-                    if s not in seen_snippets and not s.startswith("[Web search failed:"):
-                        seen_snippets.add(s)
-                        docs.append(s)
+                    if s["text"] not in seen_snippets and not s["text"].startswith("[Web search failed:"):
+                        seen_snippets.add(s["text"])
+                        docs.append(s["text"])
             if docs:
                 context_docs = docs
 
@@ -280,13 +288,35 @@ async def chat(req: ChatRequest):
         "corrected_response": None,
     }
 
-    # Step 3 — Auto-fix if requested and below threshold
+    # Step 3 — Auto-fix if requested and below threshold (Verify-and-Correct Loop)
     if req.auto_fix and not agg.is_trustworthy:
-        fixed = await corrector.constrained_reprompt(
-            req.query, generated, agg.unverified_claims
-        )
-        response_data["was_corrected"] = True
-        response_data["corrected_response"] = fixed
+        current_response = generated
+        current_agg = agg
+        
+        for round_num in range(2):
+            fixed = await corrector.constrained_reprompt(
+                req.query, current_response, current_agg.unverified_claims
+            )
+            
+            # Re-run detectors on the fixed response
+            new_tasks = [
+                semantic_detector.score(req.query, fixed, context_docs),
+                judge_detector.score(req.query, fixed, context_docs),
+                rag_detector.score(req.query, fixed, context_docs),
+                nli_detector.score(req.query, fixed, context_docs),
+            ]
+            new_results = await asyncio.gather(*new_tasks)
+            new_agg = aggregator.aggregate(list(new_results), fixed)
+            
+            if new_agg.is_trustworthy or round_num == 1:
+                response_data["was_corrected"] = True
+                response_data["corrected_response"] = fixed
+                response_data["score"] = new_agg.to_dict()
+                response_data["detectors"] = [r.to_dict() for r in new_results]
+                break
+            else:
+                current_response = fixed
+                current_agg = new_agg
 
     cache_manager.save_cached_chat(req.query, response_data)
     return response_data
@@ -314,7 +344,13 @@ async def chat_stream(req: ChatRequest):
     def producer(l):
         full_text = ""
         try:
-            for chunk in llm_client.generate_response_stream(req.query):
+            # Build history list
+            messages = []
+            if req.history:
+                messages.extend(req.history)
+            messages.append({"role": "user", "content": req.query})
+
+            for chunk in llm_client.chat_stream(messages):
                 asyncio.run_coroutine_threadsafe(q.put({"chunk": chunk}), l)
                 full_text += chunk
         except Exception as e:
@@ -358,9 +394,9 @@ async def chat_stream(req: ChatRequest):
                         docs = []
                         for snippets in per_claim_snippets:
                             for s in snippets[:2]:  # take top 2 snippets per claim to prevent cutoff
-                                if s not in seen_snippets and not s.startswith("[Web search failed:"):
-                                    seen_snippets.add(s)
-                                    docs.append(s)
+                                if s["text"] not in seen_snippets and not s["text"].startswith("[Web search failed:"):
+                                    seen_snippets.add(s["text"])
+                                    docs.append(s["text"])
                         if docs:
                             context_docs = docs
 
@@ -383,11 +419,33 @@ async def chat_stream(req: ChatRequest):
                 }
                 
                 if req.auto_fix and not agg.is_trustworthy:
-                    fixed = await corrector.constrained_reprompt(
-                        req.query, full_text, agg.unverified_claims
-                    )
-                    final_data["was_corrected"] = True
-                    final_data["corrected_response"] = fixed
+                    current_response = full_text
+                    current_agg = agg
+                    
+                    for round_num in range(2):
+                        fixed = await corrector.constrained_reprompt(
+                            req.query, current_response, current_agg.unverified_claims
+                        )
+                        
+                        # Re-run detectors on the fixed response
+                        new_tasks = []
+                        if semantic_detector: new_tasks.append(semantic_detector.score(req.query, fixed, context_docs))
+                        if judge_detector: new_tasks.append(judge_detector.score(req.query, fixed, context_docs))
+                        if rag_detector: new_tasks.append(rag_detector.score(req.query, fixed, context_docs))
+                        if nli_detector: new_tasks.append(nli_detector.score(req.query, fixed, context_docs))
+                        
+                        new_results = await asyncio.gather(*new_tasks)
+                        new_agg = aggregator.aggregate(list(new_results), fixed)
+                        
+                        if new_agg.is_trustworthy or round_num == 1:
+                            final_data["was_corrected"] = True
+                            final_data["corrected_response"] = fixed
+                            final_data["score"] = new_agg.to_dict()
+                            final_data["detectors"] = [r.to_dict() for r in new_results]
+                            break
+                        else:
+                            current_response = fixed
+                            current_agg = new_agg
                     
                 cache_manager.save_cached_chat(req.query, final_data)
                 yield f"data: {json.dumps({'result': final_data})}\n\n"
