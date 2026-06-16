@@ -199,7 +199,7 @@ export default function App() {
                 color: 'var(--clr-text)',
                 lineHeight: '1.1',
               }}>
-                Antigravity
+                Verify.io
               </h1>
               <p style={{
                 fontSize: '0.68rem',
