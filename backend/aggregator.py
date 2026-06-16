@@ -10,7 +10,72 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 from detectors.base import DetectorResult
+
+# Claims with cosine similarity above this threshold are considered
+# semantically equivalent (e.g. same fact worded differently by different
+# detectors).  0.55 is deliberately conservative—tight enough not to
+# merge genuinely distinct claims, loose enough to catch reformulations.
+_SEMANTIC_SIM_THRESHOLD = 0.55
+
+
+def _dedup_claim_list(claims: list[str]) -> list[str]:
+    """Deduplicate claims by normalised (lowercased, stripped, no trailing period) text.
+
+    Preserves the original casing of the first occurrence.
+    """
+    seen: set[str] = set()
+    unique: list[str] = []
+    for c in claims:
+        key = c.strip().rstrip(".").strip().lower()
+        if key and key not in seen:
+            seen.add(key)
+            unique.append(c)
+    return unique
+
+
+def _remove_semantic_duplicates(
+    unverified: list[str],
+    verified: list[str],
+    threshold: float = _SEMANTIC_SIM_THRESHOLD,
+) -> list[str]:
+    """Remove unverified claims that are semantically covered by a verified claim.
+
+    Uses TF-IDF cosine similarity to catch differently-worded variants of
+    the same factual claim (e.g. "The IBM Simon was released in 1994 and
+    had email" vs "The IBM Simon had email, fax, and phone capabilities").
+
+    Returns the filtered list of genuinely-unverified claims.
+    """
+    if not unverified or not verified:
+        return unverified
+
+    try:
+        vectorizer = TfidfVectorizer()
+        # Fit on all claims, then compute cross-similarity
+        all_texts = verified + unverified
+        tfidf_matrix = vectorizer.fit_transform(all_texts)
+
+        n_verified = len(verified)
+        verified_matrix = tfidf_matrix[:n_verified]
+        unverified_matrix = tfidf_matrix[n_verified:]
+
+        sim_matrix = cosine_similarity(unverified_matrix, verified_matrix)
+
+        filtered: list[str] = []
+        for i, claim in enumerate(unverified):
+            max_sim = float(np.max(sim_matrix[i]))
+            if max_sim < threshold:
+                # Not covered by any verified claim → keep as unverified
+                filtered.append(claim)
+        return filtered
+    except Exception:
+        # Fallback: if TF-IDF fails for any reason, return original list
+        return unverified
 
 
 @dataclass
@@ -138,11 +203,57 @@ class ScoreAggregator:
 
         final = max(0.0, min(100.0, final))
 
+        # ── Deduplicate & resolve conflicting claims ─────────────
+        # Different detectors may classify the same claim differently.
+        # We prioritize strong detectors ('rag_grounding', 'llm_judge') over weaker
+        # zero-shot NLI models, preventing false-positive NLI entailments from overriding
+        # actual contradictions/unverified flags.
+        verified_by_strong = []
+        unverified_by_strong = []
+
+        for r in results:
+            if r.name in ("rag_grounding", "llm_judge"):
+                verified_by_strong.extend(r.verified_claims)
+                unverified_by_strong.extend(r.unverified_claims)
+
+        deduped_strong_verified = _dedup_claim_list(verified_by_strong)
+        deduped_strong_unverified = _dedup_claim_list(unverified_by_strong)
+
+        if verified_by_strong or unverified_by_strong:
+            # If strong detectors are active, their unverified verdicts override verified ones
+            strong_unverified_keys = {c.strip().rstrip(".").strip().lower() for c in deduped_strong_unverified}
+            final_verified = [c for c in deduped_strong_verified if c.strip().rstrip(".").strip().lower() not in strong_unverified_keys]
+            final_unverified = deduped_strong_unverified
+
+            # Include weaker detector claims only if not already covered by strong detectors
+            seen_keys = {c.strip().rstrip(".").strip().lower() for c in (final_verified + final_unverified)}
+            for r in results:
+                if r.name not in ("rag_grounding", "llm_judge"):
+                    for c in r.verified_claims:
+                        if c.strip().rstrip(".").strip().lower() not in seen_keys:
+                            final_verified.append(c)
+                            seen_keys.add(c.strip().rstrip(".").strip().lower())
+                    for c in r.unverified_claims:
+                        if c.strip().rstrip(".").strip().lower() not in seen_keys:
+                            final_unverified.append(c)
+                            seen_keys.add(c.strip().rstrip(".").strip().lower())
+        else:
+            # Fallback to simple union if no strong detectors ran
+            final_verified = _dedup_claim_list(all_verified)
+            final_unverified = _dedup_claim_list(all_unverified)
+            verified_keys = {c.strip().rstrip(".").strip().lower() for c in final_verified}
+            final_unverified = [c for c in final_unverified if c.strip().rstrip(".").strip().lower() not in verified_keys]
+
+        # Remove unverified claims that are *semantically* covered by a verified claim
+        final_unverified = _remove_semantic_duplicates(
+            final_unverified, final_verified
+        )
+
         return AggregatedScore(
             final_score=final,
             sub_scores=sub_scores,
-            verified_claims=list(set(all_verified)),
-            unverified_claims=list(set(all_unverified)),
+            verified_claims=final_verified,
+            unverified_claims=final_unverified,
             evidence=all_evidence,
             penalties=penalties,
             is_trustworthy=final >= self.threshold,

@@ -3,12 +3,12 @@ import {
   Shield,
   Zap,
   Brain,
-  Database,
+  Globe,
   Activity,
 } from 'lucide-react';
 import ChatInput from './components/ChatInput';
 import ResponseCard from './components/ResponseCard';
-import { chatWithDetection, correctResponse } from './api';
+import { chatWithDetection, correctResponse, chatStreamWithDetection } from './api';
 
 export default function App() {
   const [messages, setMessages] = useState([]);
@@ -35,21 +35,35 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      const data = await chatWithDetection(query);
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === id
-            ? {
-                ...m,
-                response: data.response,
-                scoreData: data.score,
-                detectors: data.detectors,
-                corrected: data.corrected_response || null,
-                loading: false,
-              }
-            : m
-        )
-      );
+      const stream = chatStreamWithDetection(query);
+      for await (const data of stream) {
+        if (data.chunk !== undefined) {
+           setMessages((prev) =>
+             prev.map((m) =>
+               m.id === id
+                 ? { ...m, response: (m.response || "") + data.chunk }
+                 : m
+             )
+           );
+        } else if (data.result !== undefined) {
+           setMessages((prev) =>
+             prev.map((m) =>
+               m.id === id
+                 ? {
+                     ...m,
+                     response: data.result.response,
+                     scoreData: data.result.score,
+                     detectors: data.result.detectors,
+                     corrected: data.result.corrected_response || null,
+                     loading: false,
+                   }
+                 : m
+             )
+           );
+        } else if (data.error !== undefined) {
+           throw new Error(data.error);
+        }
+      }
     } catch (err) {
       setMessages((prev) =>
         prev.map((m) =>
@@ -222,9 +236,9 @@ export default function App() {
               margin: '0 auto',
             }}>
               {[
-                { icon: Brain, title: 'Semantic Entropy', desc: 'Multi-sample consistency via embeddings' },
+                              { icon: Brain, title: 'Semantic Entropy', desc: 'Multi-sample consistency via embeddings' },
                 { icon: Zap, title: 'LLM Judge', desc: 'Structured fact-checking prompt' },
-                { icon: Database, title: 'RAG Grounding', desc: 'Knowledge-base verification' },
+                { icon: Globe, title: 'Web Grounding', desc: 'Live internet search via Serper.dev' },
                 { icon: Activity, title: 'Smart Scoring', desc: 'Weighted aggregation + penalties' },
               ].map((f, i) => (
                 <div
@@ -279,13 +293,29 @@ export default function App() {
                   {msg.query}
                 </p>
 
+                {msg.response && (
+                  <div style={{
+                    fontSize: '0.95rem',
+                    lineHeight: '1.7',
+                    color: 'var(--clr-text)',
+                    marginBottom: '1.25rem',
+                    whiteSpace: 'pre-wrap',
+                  }}>
+                    {msg.response}
+                  </div>
+                )}
+
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '0.75rem',
                 }}>
-                  <div className="shimmer" style={{ height: '16px', width: '90%' }} />
-                  <div className="shimmer" style={{ height: '16px', width: '75%' }} />
+                  {!msg.response && (
+                    <>
+                      <div className="shimmer" style={{ height: '16px', width: '90%' }} />
+                      <div className="shimmer" style={{ height: '16px', width: '75%' }} />
+                    </>
+                  )}
                   <div className="shimmer" style={{ height: '16px', width: '60%' }} />
                   <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                     <div className="shimmer" style={{ height: '28px', width: '120px' }} />
@@ -302,7 +332,7 @@ export default function App() {
                   gap: '0.4rem',
                 }}>
                   <Activity size={13} style={{ animation: 'pulse-ring 1.5s ease-in-out infinite' }} />
-                  Generating response & running 3 detectors in parallel…
+                  {msg.response ? "Running 4 detectors in parallel…" : "Generating response…"}
                 </p>
               </div>
             ) : (

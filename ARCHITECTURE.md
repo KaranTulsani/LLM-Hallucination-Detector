@@ -36,12 +36,12 @@
                      │   └─────────────┘     └──────────────┘                  │
                      └─────────────────────────────────────────────────────────┘
                                               │
-                              ┌────────────────┼───────────────┐
-                              ▼                ▼               ▼
-                        ┌──────────┐   ┌────────────┐  ┌────────────┐
-                        │  Groq    │   │  ChromaDB   │  │  fastembed  │
-                        │  (LLM)   │   │  (Vector)   │  │  (Embed)    │
-                        └──────────┘   └────────────┘  └────────────┘
+                               ┌────────────────┼───────────────┐
+                               ▼                ▼               ▼
+                         ┌──────────┐   ┌────────────┐  ┌────────────┐
+                         │  Groq    │   │  Serper.dev │  │   httpx    │
+                         │  (LLM)   │   │  (Search)   │  │  (Async)   │
+                         └──────────┘   └────────────┘  └────────────┘
 ```
 
 ## Data Flow
@@ -58,11 +58,11 @@ The backend generates a response using the LLM client, then pipes both query + r
 
 All three detectors execute simultaneously via `asyncio.gather()`:
 
-- **SemanticEntropyDetector**: Generates N independent responses, embeds them with fastembed (BAAI/bge-small-en-v1.5), computes pairwise cosine similarity, and maps average similarity to a 0–1 confidence score.
+- **SemanticEntropyDetector**: Generates N independent responses, computes pairwise cosine similarity using numpy/scikit-learn, and maps average similarity to a 0–1 confidence score via calibrated thresholds (>0.92 → 100%, <0.60 → 0%).
 
-- **LLMJudgeDetector**: Sends query+response to a structured fact-checking prompt. The judge returns verified/unverified claims, fabricated citations, and overconfidence flags. Score = blend of claim ratio and judge confidence, with penalties.
+- **LLMJudgeDetector**: Sends query+response to a dedicated stronger judge model (`llama-3.3-70b-versatile`) with a structured fact-checking prompt. The judge returns verified/unverified claims, fabricated citations, and overconfidence flags. Score = blend of claim ratio (60%) and judge confidence (40%), minus penalties.
 
-- **RAGGroundingDetector**: Extracts atomic claims from the response, retrieves top-k documents from ChromaDB, and has the LLM verify each claim as supported/contradicted. If no KB exists, returns a 0.5 penalty score.
+- **RAGGroundingDetector**: Extracts atomic claims from the response, searches each claim in real-time via the Serper.dev Google Search API, and has the LLM verify each claim as `supported`, `partially_supported`, `contradicted`, or `not_found`. If `SERPER_API_KEY` is missing, returns a neutral 0.5 penalty score.
 
 ### 3. Score Aggregation
 
@@ -104,11 +104,16 @@ Three strategies, chosen by the user or auto-selected:
 ### Model-Agnostic Wrapper
 Every LLM call routes through `LLMClient`. To swap providers (Groq → OpenAI → Anthropic), change only `llm_client.py`. Detection logic never touches provider APIs directly.
 
-### CPU-First Embedding
-Using fastembed (ONNX runtime) instead of PyTorch-based sentence-transformers. This avoids 2GB+ RAM overhead and works on low-spec machines (i3, no GPU).
+### Dual-Model Strategy
+The system uses two separate `LLMClient` instances at startup:
+- **Generation model** (`LLM_MODEL`, default: `llama-3.1-8b-instant`): Fast, used for generating answers, semantic entropy sampling, and RAG claim verification.
+- **Judge model** (`JUDGE_MODEL`, default: `llama-3.3-70b-versatile`): Stronger, used exclusively for LLM-as-judge fact-checking. A smarter judge evaluating a weaker model's output catches blind spots the model would miss when judging itself.
+
+### Live Web Search Grounding
+RAG grounding uses the Serper.dev API for real-time Google Search instead of a static vector database. This eliminates the need to pre-populate a knowledge base, keeps facts current, and removes heavy dependencies (ChromaDB, fastembed, PyTorch).
 
 ### Defensive JSON Parsing
 LLMs often wrap JSON in markdown fences or add prose. `LLMClient._extract_json()` tries three parsing strategies before falling back.
 
 ### Graceful Degradation
-If ChromaDB has no data, RAG returns 0.5 (not 0.0 or 1.0). Missing detectors are excluded from aggregation rather than blocking the pipeline.
+If `SERPER_API_KEY` is not configured, RAG returns 0.5 (not 0.0 or 1.0). Missing detectors are excluded from aggregation rather than blocking the pipeline. API key rotation is supported via comma-separated `GROQ_API_KEYS`.

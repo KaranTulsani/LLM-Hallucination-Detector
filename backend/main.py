@@ -5,25 +5,29 @@ Main entrypoints:
   POST /api/detect       — score a query+response pair
   POST /api/correct      — fix a hallucinated response
   POST /api/chat         — generate + auto-detect in one call
-  POST /api/kb/add       — add documents to the knowledge base
-  DELETE /api/kb/reset   — clear the knowledge base
+  POST /api/kb/add       — DEPRECATED (web search replaced static KB)
+  DELETE /api/kb/reset   — DEPRECATED (web search replaced static KB)
   GET  /api/health       — health check
 """
 
 from __future__ import annotations
 
 import asyncio
+import json
 import os
+import httpx
+import cache_manager
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from aggregator import ScoreAggregator
 from corrector import Corrector
-from detectors import LLMJudgeDetector, RAGGroundingDetector, SemanticEntropyDetector
+from detectors import LLMJudgeDetector, NLIEntailmentDetector, RAGGroundingDetector, SemanticEntropyDetector
 from llm_client import LLMClient
 
 # Load .env relative to this file so it works regardless of CWD
@@ -33,31 +37,39 @@ load_dotenv(env_path)
 # ── Shared instances (created once at startup) ──────────────────────
 
 llm_client: LLMClient | None = None
+judge_llm_client: LLMClient | None = None
 semantic_detector: SemanticEntropyDetector | None = None
 judge_detector: LLMJudgeDetector | None = None
 rag_detector: RAGGroundingDetector | None = None
+nli_detector: NLIEntailmentDetector | None = None
 aggregator: ScoreAggregator | None = None
 corrector: Corrector | None = None
+http_client: httpx.AsyncClient | None = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialise heavy objects once, share across requests."""
-    global llm_client, semantic_detector, judge_detector
-    global rag_detector, aggregator, corrector
+    global llm_client, judge_llm_client, semantic_detector, judge_detector
+    global rag_detector, nli_detector, aggregator, corrector, http_client
 
     threshold = float(os.getenv("DETECTION_THRESHOLD", "65"))
+    judge_model = os.getenv("JUDGE_MODEL", "llama-3.3-70b-versatile")
 
-    llm_client = LLMClient()
+    http_client = httpx.AsyncClient(timeout=30.0)
+    llm_client = LLMClient()  # fast model for generation (llama-3.1-8b-instant)
+    judge_llm_client = LLMClient(model=judge_model)  # stronger model for judging
     semantic_detector = SemanticEntropyDetector(llm_client=llm_client)
-    judge_detector = LLMJudgeDetector(llm_client=llm_client)
-    rag_detector = RAGGroundingDetector(llm_client=llm_client)
+    judge_detector = LLMJudgeDetector(llm_client=judge_llm_client)
+    rag_detector = RAGGroundingDetector(llm_client=llm_client, http_client=http_client)
+    nli_detector = NLIEntailmentDetector(llm_client=llm_client, http_client=http_client)
     aggregator = ScoreAggregator(threshold=threshold)
     corrector = Corrector(llm_client=llm_client)
 
     yield  # app runs
 
-    # cleanup (nothing heavy to tear down)
+    # cleanup
+    await http_client.aclose()
 
 
 app = FastAPI(
@@ -85,7 +97,7 @@ class DetectRequest(BaseModel):
     context_docs: list[str] | None = None
     detectors: list[str] | None = Field(
         default=None,
-        description="Which detectors to run. Default: all. Options: semantic_entropy, llm_judge, rag_grounding",
+        description="Which detectors to run. Default: all. Options: semantic_entropy, llm_judge, rag_grounding, nli_entailment",
     )
 
 
@@ -109,6 +121,7 @@ class ChatRequest(BaseModel):
 
 
 class KBAddRequest(BaseModel):
+    """Deprecated: retained for backward-compatibility only."""
     documents: list[str]
     ids: list[str] | None = None
 
@@ -118,30 +131,72 @@ class KBAddRequest(BaseModel):
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "model": llm_client.model if llm_client else "unknown"}
+    return {
+        "status": "ok",
+        "model": llm_client.model if llm_client else "unknown",
+        "judge_model": judge_llm_client.model if judge_llm_client else "unknown",
+    }
 
 
 @app.post("/api/detect")
 async def detect(req: DetectRequest):
     """Run hallucination detection on a query+response pair."""
 
-    selected = req.detectors or ["semantic_entropy", "llm_judge", "rag_grounding"]
+    # Check cache first
+    cached = cache_manager.get_cached_detect(req.query, req.response)
+    if cached:
+        return cached
+
+    selected = req.detectors or ["semantic_entropy", "llm_judge", "rag_grounding", "nli_entailment"]
+    
+    context_docs = req.context_docs
+    if (
+        not context_docs
+        and "rag_grounding" in selected
+        and rag_detector
+        and rag_detector.has_knowledge_base
+    ):
+        claims = await rag_detector._extract_claims(req.response)
+        claims = [c.strip() for c in claims if c.strip()]
+        if claims:
+            seen_claims = set()
+            unique_claims = []
+            for c in claims:
+                key = c.lower()
+                if key not in seen_claims:
+                    seen_claims.add(key)
+                    unique_claims.append(c)
+            search_tasks = [rag_detector._retriever.search(c) for c in unique_claims]
+            per_claim_snippets = await asyncio.gather(*search_tasks)
+            seen_snippets = set()
+            docs = []
+            for snippets in per_claim_snippets:
+                for s in snippets[:2]:
+                    if s not in seen_snippets and not s.startswith("[Web search failed:"):
+                        seen_snippets.add(s)
+                        docs.append(s)
+            if docs:
+                context_docs = docs
 
     tasks = []
     if "semantic_entropy" in selected and semantic_detector:
-        tasks.append(semantic_detector.score(req.query, req.response, req.context_docs))
+        tasks.append(semantic_detector.score(req.query, req.response, context_docs))
     if "llm_judge" in selected and judge_detector:
-        tasks.append(judge_detector.score(req.query, req.response, req.context_docs))
+        tasks.append(judge_detector.score(req.query, req.response, context_docs))
     if "rag_grounding" in selected and rag_detector:
-        tasks.append(rag_detector.score(req.query, req.response, req.context_docs))
+        tasks.append(rag_detector.score(req.query, req.response, context_docs))
+    if "nli_entailment" in selected and nli_detector:
+        tasks.append(nli_detector.score(req.query, req.response, context_docs))
 
     results = await asyncio.gather(*tasks)
     agg = aggregator.aggregate(list(results), req.response)
 
-    return {
+    result_data = {
         "score": agg.to_dict(),
         "detectors": [r.to_dict() for r in results],
     }
+    cache_manager.save_cached_detect(req.query, req.response, result_data)
+    return result_data
 
 
 @app.post("/api/correct")
@@ -168,16 +223,50 @@ async def correct(req: CorrectRequest):
 async def chat(req: ChatRequest):
     """Generate a response, detect hallucination, and optionally fix it."""
 
+    # Check cache first
+    cached = cache_manager.get_cached_chat(req.query)
+    if cached:
+        return cached
+
     # Step 1 — Generate response
     generated = await asyncio.to_thread(
         llm_client.generate_response, req.query
     )
 
     # Step 2 — Run detection
+    context_docs = req.context_docs
+    if (
+        not context_docs
+        and rag_detector
+        and rag_detector.has_knowledge_base
+    ):
+        claims = await rag_detector._extract_claims(generated)
+        claims = [c.strip() for c in claims if c.strip()]
+        if claims:
+            seen_claims = set()
+            unique_claims = []
+            for c in claims:
+                key = c.lower()
+                if key not in seen_claims:
+                    seen_claims.add(key)
+                    unique_claims.append(c)
+            search_tasks = [rag_detector._retriever.search(c) for c in unique_claims]
+            per_claim_snippets = await asyncio.gather(*search_tasks)
+            seen_snippets = set()
+            docs = []
+            for snippets in per_claim_snippets:
+                for s in snippets[:2]:
+                    if s not in seen_snippets and not s.startswith("[Web search failed:"):
+                        seen_snippets.add(s)
+                        docs.append(s)
+            if docs:
+                context_docs = docs
+
     tasks = [
-        semantic_detector.score(req.query, generated, req.context_docs),
-        judge_detector.score(req.query, generated, req.context_docs),
-        rag_detector.score(req.query, generated, req.context_docs),
+        semantic_detector.score(req.query, generated, context_docs),
+        judge_detector.score(req.query, generated, context_docs),
+        rag_detector.score(req.query, generated, context_docs),
+        nli_detector.score(req.query, generated, context_docs),
     ]
     results = await asyncio.gather(*tasks)
     agg = aggregator.aggregate(list(results), generated)
@@ -199,21 +288,133 @@ async def chat(req: ChatRequest):
         response_data["was_corrected"] = True
         response_data["corrected_response"] = fixed
 
+    cache_manager.save_cached_chat(req.query, response_data)
     return response_data
+
+
+@app.post("/api/chat/stream")
+async def chat_stream(req: ChatRequest):
+    """Generate response stream, then detect hallucination."""
+    
+    # Check cache first
+    cached = cache_manager.get_cached_chat(req.query)
+    if cached:
+        async def cached_stream_generator():
+            text = cached.get("response", "")
+            # Chunk the response into ~4 character tokens and stream them with 10ms typing delay
+            for i in range(0, len(text), 4):
+                yield f"data: {json.dumps({'chunk': text[i:i+4]})}\n\n"
+                await asyncio.sleep(0.01)
+            yield f"data: {json.dumps({'result': cached})}\n\n"
+        return StreamingResponse(cached_stream_generator(), media_type="text/event-stream")
+
+    q = asyncio.Queue()
+    loop = asyncio.get_running_loop()
+
+    def producer(l):
+        full_text = ""
+        try:
+            for chunk in llm_client.generate_response_stream(req.query):
+                asyncio.run_coroutine_threadsafe(q.put({"chunk": chunk}), l)
+                full_text += chunk
+        except Exception as e:
+            asyncio.run_coroutine_threadsafe(q.put({"error": str(e)}), l)
+            return
+
+        asyncio.run_coroutine_threadsafe(q.put({"done": True, "full_text": full_text}), l)
+
+    loop.run_in_executor(None, producer, loop)
+
+    async def stream_generator():
+        while True:
+            msg = await q.get()
+            if "error" in msg:
+                yield f"data: {json.dumps({'error': msg['error']})}\n\n"
+                break
+            elif "chunk" in msg:
+                yield f"data: {json.dumps({'chunk': msg['chunk']})}\n\n"
+            elif "done" in msg:
+                full_text = msg["full_text"]
+                
+                context_docs = req.context_docs
+                if (
+                    not context_docs
+                    and rag_detector
+                    and rag_detector.has_knowledge_base
+                ):
+                    claims = await rag_detector._extract_claims(full_text)
+                    claims = [c.strip() for c in claims if c.strip()]
+                    if claims:
+                        seen_claims = set()
+                        unique_claims = []
+                        for c in claims:
+                            key = c.lower()
+                            if key not in seen_claims:
+                                seen_claims.add(key)
+                                unique_claims.append(c)
+                        search_tasks = [rag_detector._retriever.search(c) for c in unique_claims]
+                        per_claim_snippets = await asyncio.gather(*search_tasks)
+                        seen_snippets = set()
+                        docs = []
+                        for snippets in per_claim_snippets:
+                            for s in snippets[:2]:  # take top 2 snippets per claim to prevent cutoff
+                                if s not in seen_snippets and not s.startswith("[Web search failed:"):
+                                    seen_snippets.add(s)
+                                    docs.append(s)
+                        if docs:
+                            context_docs = docs
+
+                tasks = []
+                if semantic_detector: tasks.append(semantic_detector.score(req.query, full_text, context_docs))
+                if judge_detector: tasks.append(judge_detector.score(req.query, full_text, context_docs))
+                if rag_detector: tasks.append(rag_detector.score(req.query, full_text, context_docs))
+                if nli_detector: tasks.append(nli_detector.score(req.query, full_text, context_docs))
+                
+                results = await asyncio.gather(*tasks)
+                agg = aggregator.aggregate(list(results), full_text)
+                
+                final_data = {
+                    "query": req.query,
+                    "response": full_text,
+                    "score": agg.to_dict(),
+                    "detectors": [r.to_dict() for r in results],
+                    "was_corrected": False,
+                    "corrected_response": None,
+                }
+                
+                if req.auto_fix and not agg.is_trustworthy:
+                    fixed = await corrector.constrained_reprompt(
+                        req.query, full_text, agg.unverified_claims
+                    )
+                    final_data["was_corrected"] = True
+                    final_data["corrected_response"] = fixed
+                    
+                cache_manager.save_cached_chat(req.query, final_data)
+                yield f"data: {json.dumps({'result': final_data})}\n\n"
+                break
+
+    return StreamingResponse(stream_generator(), media_type="text/event-stream")
 
 
 @app.post("/api/kb/add")
 async def kb_add(req: KBAddRequest):
-    """Add documents to the in-memory vector store."""
-    rag_detector.add_documents(req.documents, req.ids)
+    """
+    DEPRECATED — Web search replaced static KB.
+    Kept for backward-compatibility; does nothing.
+    """
     return {
-        "status": "ok",
-        "documents_added": len(req.documents),
+        "status": "deprecated",
+        "message": "Static knowledge base is no longer used. RAG grounding now uses live web search via Serper.dev.",
     }
 
 
 @app.delete("/api/kb/reset")
 async def kb_reset():
-    """Clear the knowledge base."""
-    rag_detector.reset_knowledge_base()
-    return {"status": "ok", "message": "Knowledge base cleared."}
+    """
+    DEPRECATED — Web search replaced static KB.
+    Kept for backward-compatibility; does nothing.
+    """
+    return {
+        "status": "deprecated",
+        "message": "Static knowledge base is no longer used. RAG grounding now uses live web search via Serper.dev.",
+    }

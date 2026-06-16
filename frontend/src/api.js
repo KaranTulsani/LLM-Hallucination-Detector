@@ -35,6 +35,51 @@ export async function chatWithDetection(query, contextDocs = null, autoFix = fal
 }
 
 /**
+ * Full chat flow using SSE for streaming generation, then detection.
+ */
+export async function* chatStreamWithDetection(query, contextDocs = null, autoFix = false) {
+  const res = await fetch(`${API_BASE}/chat/stream`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query,
+      context_docs: contextDocs,
+      auto_fix: autoFix,
+    }),
+  });
+
+  if (!res.ok) throw new Error(`Chat stream failed: ${res.statusText}`);
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    
+    buffer += decoder.decode(value, { stream: true });
+    
+    let boundary = buffer.indexOf("\n\n");
+    while (boundary !== -1) {
+      const chunk = buffer.slice(0, boundary);
+      buffer = buffer.slice(boundary + 2);
+      
+      if (chunk.startsWith("data: ")) {
+        const dataStr = chunk.slice(6);
+        try {
+          const data = JSON.parse(dataStr);
+          yield data;
+        } catch (e) {
+          console.error("Failed to parse chunk", chunk);
+        }
+      }
+      boundary = buffer.indexOf("\n\n");
+    }
+  }
+}
+
+/**
  * Fix a hallucinated response.
  */
 export async function correctResponse(query, response, unverifiedClaims = [], strategy = 'constrained', contextDocs = null) {

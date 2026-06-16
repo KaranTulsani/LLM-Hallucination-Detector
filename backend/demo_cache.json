@@ -1,0 +1,857 @@
+{
+  "chat_8aacd3864b117e34c4a9098ee55de8e341b6e30018b206798a4584f6a2648ab1": {
+    "query": "who was the first person to climb mount everest?",
+    "response": "The first people to climb Mount Everest were Tenzing Norgay, a Nepali Sherpa mountaineer, and Sir Edmund Hillary, a New Zealand mountaineer and explorer. They successfully reached the summit of Mount Everest on May 29, 1953, as part of a British expedition led by John Hunt.",
+    "score": {
+      "final_score": 84.6,
+      "sub_scores": {
+        "semantic_entropy": 0.4288,
+        "llm_judge": 1.0,
+        "rag_grounding": 0.9,
+        "nli_entailment": 1.0
+      },
+      "verified_claims": [
+        "Tenzing Norgay and Sir Edmund Hillary were the first people to climb Mount Everest",
+        "They successfully reached the summit of Mount Everest on May 29, 1953",
+        "Tenzing Norgay was a Nepali Sherpa mountaineer",
+        "Sir Edmund Hillary was a New Zealand mountaineer and explorer",
+        "A British expedition led by John Hunt was involved in the first ascent of Mount Everest"
+      ],
+      "unverified_claims": [],
+      "evidence": [
+        "Generated 3 alternative responses.",
+        "Average pairwise cosine similarity: 0.737",
+        "Judge confidence: 1.00",
+        "Verified: 4, Unverified: 0",
+        "Tenzing Norgay and Sir Edmund Hillary were the first people to climb Mount Everest → supported (web evidence: Edmund Hillary and Tibetan mountaineer Tenzing Norgay were the first people to reach the summit of Mount Everest, the highest mountain in the world.)",
+        "Tenzing Norgay was a Nepali Sherpa mountaineer → supported (web evidence: Tenzing Norgay, born Namgyal Wangdi, and also referred to as Sherpa Tenzing, was a Nepalese-Indian Sherpa mountaineer.)",
+        "Sir Edmund Hillary was a New Zealand mountaineer and explorer → supported (web evidence: Sir Edmund Percival Hillary was a New Zealand mountaineer, explorer, and philanthropist.)",
+        "They successfully reached the summit of Mount Everest on May 29, 1953 → supported (web evidence: The two men reached the summit by late morning on May 29, 1953.)",
+        "A British expedition led by John Hunt was involved in the first ascent of Mount Everest → partially_supported (web evidence: The massive 1953 British expedition that placed Norgay and Hillary on the top, was led by Sir John Hunt and had 320 porters supporting 10 climbers.)",
+        "Tenzing Norgay and Sir Edmund Hillary were the first people to climb Mount Everest → entailment (88% confidence)",
+        "Tenzing Norgay was a Nepali Sherpa mountaineer → entailment (73% confidence)",
+        "Sir Edmund Hillary was a New Zealand mountaineer and explorer → entailment (77% confidence)",
+        "They successfully reached the summit of Mount Everest on May 29, 1953 → entailment (76% confidence)",
+        "A British expedition led by John Hunt was involved in the first ascent of Mount Everest → entailment (84% confidence)"
+      ],
+      "penalties": [],
+      "is_trustworthy": true,
+      "threshold_used": 65.0
+    },
+    "detectors": [
+      {
+        "name": "semantic_entropy",
+        "score": 0.4288,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "Generated 3 alternative responses.",
+          "Average pairwise cosine similarity: 0.737"
+        ],
+        "metadata": {
+          "n_samples": 3,
+          "avg_pairwise_similarity": 0.7372,
+          "min_pairwise_similarity": 0.5925,
+          "max_pairwise_similarity": 1.0
+        }
+      },
+      {
+        "name": "llm_judge",
+        "score": 1.0,
+        "verified_claims": [
+          "Tenzing Norgay and Sir Edmund Hillary were the first people to climb Mount Everest",
+          "They successfully reached the summit of Mount Everest on May 29, 1953",
+          "Tenzing Norgay was a Nepali Sherpa mountaineer",
+          "Sir Edmund Hillary was a New Zealand mountaineer and explorer"
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "Judge confidence: 1.00",
+          "Verified: 4, Unverified: 0"
+        ],
+        "metadata": {
+          "raw_confidence": 1.0,
+          "claim_ratio": 1.0,
+          "fabricated_citations": [],
+          "overconfidence_flags": []
+        }
+      },
+      {
+        "name": "rag_grounding",
+        "score": 0.9,
+        "verified_claims": [
+          "Tenzing Norgay and Sir Edmund Hillary were the first people to climb Mount Everest",
+          "Tenzing Norgay was a Nepali Sherpa mountaineer",
+          "Sir Edmund Hillary was a New Zealand mountaineer and explorer",
+          "They successfully reached the summit of Mount Everest on May 29, 1953",
+          "A British expedition led by John Hunt was involved in the first ascent of Mount Everest"
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "Tenzing Norgay and Sir Edmund Hillary were the first people to climb Mount Everest → supported (web evidence: Edmund Hillary and Tibetan mountaineer Tenzing Norgay were the first people to reach the summit of Mount Everest, the highest mountain in the world.)",
+          "Tenzing Norgay was a Nepali Sherpa mountaineer → supported (web evidence: Tenzing Norgay, born Namgyal Wangdi, and also referred to as Sherpa Tenzing, was a Nepalese-Indian Sherpa mountaineer.)",
+          "Sir Edmund Hillary was a New Zealand mountaineer and explorer → supported (web evidence: Sir Edmund Percival Hillary was a New Zealand mountaineer, explorer, and philanthropist.)",
+          "They successfully reached the summit of Mount Everest on May 29, 1953 → supported (web evidence: The two men reached the summit by late morning on May 29, 1953.)",
+          "A British expedition led by John Hunt was involved in the first ascent of Mount Everest → partially_supported (web evidence: The massive 1953 British expedition that placed Norgay and Hillary on the top, was led by Sir John Hunt and had 320 porters supporting 10 climbers.)"
+        ],
+        "metadata": {
+          "source": "context_docs",
+          "docs_retrieved": 10,
+          "claims_extracted": 5,
+          "supported": 4,
+          "partially_supported": 1,
+          "contradicted": 0,
+          "not_found": 0
+        }
+      },
+      {
+        "name": "nli_entailment",
+        "score": 1.0,
+        "verified_claims": [
+          "Tenzing Norgay and Sir Edmund Hillary were the first people to climb Mount Everest",
+          "Tenzing Norgay was a Nepali Sherpa mountaineer",
+          "Sir Edmund Hillary was a New Zealand mountaineer and explorer",
+          "They successfully reached the summit of Mount Everest on May 29, 1953",
+          "A British expedition led by John Hunt was involved in the first ascent of Mount Everest"
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "Tenzing Norgay and Sir Edmund Hillary were the first people to climb Mount Everest → entailment (88% confidence)",
+          "Tenzing Norgay was a Nepali Sherpa mountaineer → entailment (73% confidence)",
+          "Sir Edmund Hillary was a New Zealand mountaineer and explorer → entailment (77% confidence)",
+          "They successfully reached the summit of Mount Everest on May 29, 1953 → entailment (76% confidence)",
+          "A British expedition led by John Hunt was involved in the first ascent of Mount Everest → entailment (84% confidence)"
+        ],
+        "metadata": {
+          "model": "facebook/bart-large-mnli",
+          "claims_extracted": 5,
+          "entailed": 5,
+          "contradicted": 0,
+          "neutral": 0
+        }
+      }
+    ],
+    "was_corrected": false,
+    "corrected_response": null
+  },
+  "chat_752cedf2a106e2d80d8091cf0da72a22d4ea68faf5306a97542a68d00e5c1db0": {
+    "query": "who climbed the mount Everest first?",
+    "response": "Tenzing Norgay, a Nepali Sherpa mountaineer, and Sir Edmund Hillary, a New Zealand mountaineer and explorer, were the first two people to reach the summit of Mount Everest on May 29, 1953. They were part of a British expedition led by John Hunt.",
+    "score": {
+      "final_score": 73.3,
+      "sub_scores": {
+        "semantic_entropy": 0.0,
+        "llm_judge": 1.0,
+        "rag_grounding": 0.8333,
+        "nli_entailment": 1.0
+      },
+      "verified_claims": [
+        "Tenzing Norgay and Sir Edmund Hillary were the first two people to reach the summit of Mount Everest on May 29, 1953",
+        "They were part of a British expedition led by John Hunt",
+        "Tenzing Norgay was a Nepali Sherpa mountaineer",
+        "Sir Edmund Hillary was a New Zealand mountaineer and explorer",
+        "They were the first two people to reach the summit of Mount Everest",
+        "They reached the summit of Mount Everest on May 29, 1953",
+        "They were part of a British expedition"
+      ],
+      "unverified_claims": [],
+      "evidence": [
+        "Generated 3 alternative responses.",
+        "Average pairwise cosine similarity: 0.581",
+        "Judge confidence: 1.00",
+        "Verified: 2, Unverified: 0",
+        "Tenzing Norgay was a Nepali Sherpa mountaineer → supported (web evidence: Tenzing Norgay was a Nepalese mountaineer and Sherpa who, along with Sir Edmund Hillary, was the first to reach the summit of Mount Everest in 1953.)",
+        "Sir Edmund Hillary was a New Zealand mountaineer and explorer → supported (web evidence: Sir Edmund Percival Hillary was a New Zealand mountaineer, explorer, and philanthropist.)",
+        "They were the first two people to reach the summit of Mount Everest → supported (web evidence: Tenzing Norgay and Edmund Hillary reached the summit on 29 May 1953 at 11:30 a.m.)",
+        "They reached the summit of Mount Everest on May 29, 1953 → supported (web evidence: At 11:30 in the morning of May 29, 1953, New Zealand's Ed Hillary and Darjeeling's Sherpa Tenzing Norgay became the first known human beings to stand on the highest point on this Earth.)",
+        "They were part of a British expedition → supported (web evidence: They were part of the ninth British...)",
+        "John Hunt led the British expedition → contradicted (web evidence: Led by Colonel John Norgay)",
+        "Tenzing Norgay was a Nepali Sherpa mountaineer → entailment (71% confidence)",
+        "Sir Edmund Hillary was a New Zealand mountaineer and explorer → entailment (75% confidence)",
+        "They were the first two people to reach the summit of Mount Everest → entailment (88% confidence)",
+        "They reached the summit of Mount Everest on May 29, 1953 → entailment (74% confidence)",
+        "They were part of a British expedition → entailment (70% confidence)",
+        "John Hunt led the British expedition → entailment (64% confidence)"
+      ],
+      "penalties": [],
+      "is_trustworthy": true,
+      "threshold_used": 65.0
+    },
+    "detectors": [
+      {
+        "name": "semantic_entropy",
+        "score": 0.0,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "Generated 3 alternative responses.",
+          "Average pairwise cosine similarity: 0.581"
+        ],
+        "metadata": {
+          "n_samples": 3,
+          "avg_pairwise_similarity": 0.5805,
+          "min_pairwise_similarity": 0.3971,
+          "max_pairwise_similarity": 0.8888
+        }
+      },
+      {
+        "name": "llm_judge",
+        "score": 1.0,
+        "verified_claims": [
+          "Tenzing Norgay and Sir Edmund Hillary were the first two people to reach the summit of Mount Everest on May 29, 1953",
+          "They were part of a British expedition led by John Hunt"
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "Judge confidence: 1.00",
+          "Verified: 2, Unverified: 0"
+        ],
+        "metadata": {
+          "raw_confidence": 1.0,
+          "claim_ratio": 1.0,
+          "fabricated_citations": [],
+          "overconfidence_flags": []
+        }
+      },
+      {
+        "name": "rag_grounding",
+        "score": 0.8333,
+        "verified_claims": [
+          "Tenzing Norgay was a Nepali Sherpa mountaineer",
+          "Sir Edmund Hillary was a New Zealand mountaineer and explorer",
+          "They were the first two people to reach the summit of Mount Everest",
+          "They reached the summit of Mount Everest on May 29, 1953",
+          "They were part of a British expedition"
+        ],
+        "unverified_claims": [
+          "John Hunt led the British expedition"
+        ],
+        "evidence": [
+          "Tenzing Norgay was a Nepali Sherpa mountaineer → supported (web evidence: Tenzing Norgay was a Nepalese mountaineer and Sherpa who, along with Sir Edmund Hillary, was the first to reach the summit of Mount Everest in 1953.)",
+          "Sir Edmund Hillary was a New Zealand mountaineer and explorer → supported (web evidence: Sir Edmund Percival Hillary was a New Zealand mountaineer, explorer, and philanthropist.)",
+          "They were the first two people to reach the summit of Mount Everest → supported (web evidence: Tenzing Norgay and Edmund Hillary reached the summit on 29 May 1953 at 11:30 a.m.)",
+          "They reached the summit of Mount Everest on May 29, 1953 → supported (web evidence: At 11:30 in the morning of May 29, 1953, New Zealand's Ed Hillary and Darjeeling's Sherpa Tenzing Norgay became the first known human beings to stand on the highest point on this Earth.)",
+          "They were part of a British expedition → supported (web evidence: They were part of the ninth British...)",
+          "John Hunt led the British expedition → contradicted (web evidence: Led by Colonel John Norgay)"
+        ],
+        "metadata": {
+          "source": "context_docs",
+          "docs_retrieved": 12,
+          "claims_extracted": 6,
+          "supported": 5,
+          "partially_supported": 0,
+          "contradicted": 1,
+          "not_found": 0
+        }
+      },
+      {
+        "name": "nli_entailment",
+        "score": 1.0,
+        "verified_claims": [
+          "Tenzing Norgay was a Nepali Sherpa mountaineer",
+          "Sir Edmund Hillary was a New Zealand mountaineer and explorer",
+          "They were the first two people to reach the summit of Mount Everest",
+          "They reached the summit of Mount Everest on May 29, 1953",
+          "They were part of a British expedition",
+          "John Hunt led the British expedition"
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "Tenzing Norgay was a Nepali Sherpa mountaineer → entailment (71% confidence)",
+          "Sir Edmund Hillary was a New Zealand mountaineer and explorer → entailment (75% confidence)",
+          "They were the first two people to reach the summit of Mount Everest → entailment (88% confidence)",
+          "They reached the summit of Mount Everest on May 29, 1953 → entailment (74% confidence)",
+          "They were part of a British expedition → entailment (70% confidence)",
+          "John Hunt led the British expedition → entailment (64% confidence)"
+        ],
+        "metadata": {
+          "model": "facebook/bart-large-mnli",
+          "claims_extracted": 6,
+          "entailed": 6,
+          "contradicted": 0,
+          "neutral": 0
+        }
+      }
+    ],
+    "was_corrected": false,
+    "corrected_response": null
+  },
+  "chat_6f6721f71012b2e83991a65a74c1a01d552ee25e8b20c5240e8cca94587534a1": {
+    "query": "who invented smartphone?",
+    "response": "The invention of the smartphone is a bit complex and involved the contributions of several individuals and companies over time. While it's difficult to attribute the invention of the smartphone to a single person, I can provide you with some key milestones and innovators who played a significant role in its development.\n\n1. **Martin Cooper**: Often credited as the inventor of the first handheld mobile phone, Cooper, an engineer at Motorola, made the first public call on a handheld mobile phone on April 3, 1973. This call was made using the DynaTAC 8000X, a bulky device that weighed about 2 pounds.\n2. **IBM Simon**: In 1993, IBM released the IBM Simon, a touchscreen phone that combined the features of a phone, computer, and personal digital assistant (PDA). It had a touchscreen display, email, fax, and phone capabilities, as well as a calendar and address book.\n3. **Apple iPhone**: The iPhone, released in 2007, is often considered the first modern smartphone. It revolutionized the industry with its multi-touch interface, mobile app store, and sleek design. The iPhone was developed by a team led by Steve Jobs, who is often credited as the driving force behind the iPhone's creation.\n4. **Android**: The Android operating system, developed by Google, was first released in 2008. It was designed to be an open-source alternative to the iPhone's iOS, and it has since become one of the most popular mobile operating systems in the world.\n\nOther notable innovators who contributed to the development of smartphones include:\n\n* **Nokia**: The Finnish company released the first smartphone, the Nokia 9000 Communicator, in 1996. It had a full keyboard, email, and web browsing capabilities.\n* **BlackBerry**: The BlackBerry, released in 1999, was a popular smartphone that combined email, phone, and PDA features with a physical keyboard.\n* **Microsoft**: Microsoft released the Windows Mobile operating system in 2000, which was used in a variety of smartphones, including the HTC Touch and the Samsung Omnia.\n\nIn summary, while it's difficult to attribute the invention of the smartphone to a single person, Martin Cooper's development of the first handheld mobile phone in 1973, IBM's release of the IBM Simon in 1993, and Apple's release of the iPhone in 2007 were all significant milestones in the evolution of the smartphone.",
+    "score": {
+      "final_score": 53.0,
+      "sub_scores": {
+        "semantic_entropy": 0.6913,
+        "llm_judge": 0.71,
+        "rag_grounding": 0.4133,
+        "nli_entailment": 0.86
+      },
+      "verified_claims": [
+        "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973.",
+        "The IBM Simon was released in 1993 and is widely regarded as one of the first smartphones.",
+        "The iPhone was released in 2007 and revolutionized the industry with its multi-touch interface, mobile app store, and sleek design.",
+        "BlackBerry was a popular smartphone that combined email, phone, and PDA features with a physical keyboard.",
+        "The IBM Simon had a touchscreen display.",
+        "The IBM Simon had email capabilities.",
+        "The IBM Simon had fax capabilities.",
+        "The IBM Simon had phone capabilities.",
+        "IBM released the IBM Simon in 1993."
+      ],
+      "unverified_claims": [
+        "The invention of the smartphone is a bit complex and involved the contributions of several individuals and companies over time.",
+        "It's difficult to attribute the invention of the smartphone to a single person.",
+        "The DynaTAC 8000X weighed about 2 pounds.",
+        "The IBM Simon had a calendar.",
+        "The IBM Simon had an address book.",
+        "The iPhone was released in 2007.",
+        "The iPhone had a multi-touch interface.",
+        "The iPhone had a mobile app store.",
+        "The iPhone had a sleek design.",
+        "The iPhone was developed by a team led by Steve Jobs.",
+        "The Android operating system was first released in 2008.",
+        "The Android operating system was designed to be an open-source alternative to iOS.",
+        "The Android operating system became one of the most popular mobile operating systems in the world.",
+        "Nokia released the first smartphone, the Nokia 9000 Communicator, in 1996.",
+        "The Nokia 9000 Communicator had a full keyboard.",
+        "The Nokia 9000 Communicator had email capabilities.",
+        "The Nokia 9000 Communicator had web browsing capabilities.",
+        "The BlackBerry was released in 1999.",
+        "The BlackBerry had PDA features.",
+        "The BlackBerry had a physical keyboard.",
+        "Microsoft released the Windows Mobile operating system in 2000.",
+        "The Windows Mobile operating system was used in a variety of smartphones.",
+        "The HTC Touch used the Windows Mobile operating system.",
+        "The Samsung Omnia used the Windows Mobile operating system."
+      ],
+      "evidence": [
+        "Generated 3 alternative responses.",
+        "Average pairwise cosine similarity: 0.821",
+        "Judge confidence: 0.85",
+        "Verified: 7, Unverified: 3",
+        "Overconfidence flags: [\"It's difficult to attribute the invention of the smartphone to a single person.\"]",
+        "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973. → supported (web evidence: On April 3, 1973, Martin Cooper made the first ever cellphone call on the streets of New York. His invention, a brick-sized device, became the first cellphone ...)",
+        "The DynaTAC 8000X weighed about 2 pounds. → contradicted (web evidence: The DynaTAC 8000X was 10 inches (25 cm) long and weighed 2.5 pounds (1 kg).)",
+        "IBM released the IBM Simon in 1993. → partially_supported (web evidence: Announced on November 2, 1993, and released on August 16, 1994, the IBM Simon was a cellular phone and PDA combination designed by IBM.)",
+        "The IBM Simon had a touchscreen display. → supported (web evidence: Built on an x86 processor, the IBM Simon features a 4.5 inch resistive touchscreen display and runs an MS-DOS-compatible operating system with the ability to install additional software using its PCMCIA slot,)",
+        "The IBM Simon had email capabilities. → supported (web evidence: In addition to its ability to make and receive cellular phone calls, Simon was also able to send and receive and also give faxes, e-mails and cellular pages.)",
+        "The IBM Simon had fax capabilities. → supported (web evidence: In addition to its ability to make and receive cellular phone calls, Simon was also able to send and receive and also give faxes, e-mails and cellular pages.)",
+        "The IBM Simon had phone capabilities. → supported (web evidence: In addition to its ability to make and receive cellular phone calls, Simon was also able to send and receive and also give faxes, e-mails and cellular pages.)",
+        "The IBM Simon had a calendar. → not_found (web evidence: )",
+        "The IBM Simon had an address book. → not_found (web evidence: )",
+        "The iPhone was released in 2007. → not_found (web evidence: )",
+        "The iPhone had a multi-touch interface. → not_found (web evidence: )",
+        "The iPhone had a mobile app store. → not_found (web evidence: )",
+        "The iPhone had a sleek design. → not_found (web evidence: )",
+        "The iPhone was developed by a team led by Steve Jobs. → not_found (web evidence: )",
+        "The Android operating system was first released in 2008. → not_found (web evidence: )",
+        "The Android operating system was designed to be an open-source alternative to iOS. → not_found (web evidence: )",
+        "The Android operating system became one of the most popular mobile operating systems in the world. → not_found (web evidence: )",
+        "Nokia released the first smartphone, the Nokia 9000 Communicator, in 1996. → not_found (web evidence: )",
+        "The Nokia 9000 Communicator had a full keyboard. → not_found (web evidence: )",
+        "The Nokia 9000 Communicator had email capabilities. → not_found (web evidence: )",
+        "The Nokia 9000 Communicator had web browsing capabilities. → not_found (web evidence: )",
+        "The BlackBerry was released in 1999. → not_found (web evidence: )",
+        "The BlackBerry had email capabilities. → not_found (web evidence: )",
+        "The BlackBerry had phone capabilities. → not_found (web evidence: )",
+        "The BlackBerry had PDA features. → not_found (web evidence: )",
+        "The BlackBerry had a physical keyboard. → not_found (web evidence: )",
+        "Microsoft released the Windows Mobile operating system in 2000. → not_found (web evidence: )",
+        "The Windows Mobile operating system was used in a variety of smartphones. → not_found (web evidence: )",
+        "The HTC Touch used the Windows Mobile operating system. → not_found (web evidence: )",
+        "The Samsung Omnia used the Windows Mobile operating system. → not_found (web evidence: )",
+        "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973. → entailment (71% confidence)",
+        "The DynaTAC 8000X weighed about 2 pounds. → entailment (62% confidence)",
+        "IBM released the IBM Simon in 1993. → entailment (67% confidence)",
+        "The IBM Simon had a touchscreen display. → entailment (70% confidence)",
+        "The IBM Simon had email capabilities. → entailment (65% confidence)",
+        "The IBM Simon had fax capabilities. → entailment (66% confidence)",
+        "The IBM Simon had phone capabilities. → entailment (70% confidence)",
+        "The IBM Simon had a calendar. → entailment (69% confidence)",
+        "The IBM Simon had an address book. → entailment (69% confidence)",
+        "The iPhone was released in 2007. → entailment (73% confidence)",
+        "The iPhone had a multi-touch interface. → entailment (79% confidence)",
+        "The iPhone had a mobile app store. → entailment (61% confidence)",
+        "The iPhone had a sleek design. → entailment (66% confidence)",
+        "The iPhone was developed by a team led by Steve Jobs. → entailment (53% confidence)",
+        "The Android operating system was first released in 2008. → entailment (63% confidence)",
+        "The Android operating system was designed to be an open-source alternative to iOS. → neutral (47% confidence)",
+        "The Android operating system became one of the most popular mobile operating systems in the world. → neutral (48% confidence)",
+        "Nokia released the first smartphone, the Nokia 9000 Communicator, in 1996. → neutral (50% confidence)",
+        "The Nokia 9000 Communicator had a full keyboard. → entailment (57% confidence)",
+        "The Nokia 9000 Communicator had email capabilities. → entailment (52% confidence)",
+        "The Nokia 9000 Communicator had web browsing capabilities. → entailment (53% confidence)",
+        "The BlackBerry was released in 1999. → neutral (46% confidence)",
+        "The BlackBerry had email capabilities. → neutral (48% confidence)",
+        "The BlackBerry had phone capabilities. → neutral (46% confidence)",
+        "The BlackBerry had PDA features. → entailment (53% confidence)",
+        "The BlackBerry had a physical keyboard. → entailment (54% confidence)",
+        "Microsoft released the Windows Mobile operating system in 2000. → entailment (51% confidence)",
+        "The Windows Mobile operating system was used in a variety of smartphones. → entailment (53% confidence)",
+        "The HTC Touch used the Windows Mobile operating system. → entailment (55% confidence)",
+        "The Samsung Omnia used the Windows Mobile operating system. → neutral (49% confidence)"
+      ],
+      "penalties": [
+        "Overconfidence: no hedging language detected (-5)",
+        "Length mismatch: unusually long response (-3)"
+      ],
+      "is_trustworthy": false,
+      "threshold_used": 65.0
+    },
+    "detectors": [
+      {
+        "name": "semantic_entropy",
+        "score": 0.6913,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "Generated 3 alternative responses.",
+          "Average pairwise cosine similarity: 0.821"
+        ],
+        "metadata": {
+          "n_samples": 3,
+          "avg_pairwise_similarity": 0.8212,
+          "min_pairwise_similarity": 0.7638,
+          "max_pairwise_similarity": 0.8799
+        }
+      },
+      {
+        "name": "llm_judge",
+        "score": 0.71,
+        "verified_claims": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973.",
+          "The IBM Simon was released in 1993 and is widely regarded as one of the first smartphones.",
+          "The iPhone was released in 2007 and revolutionized the industry with its multi-touch interface, mobile app store, and sleek design.",
+          "The Android operating system was first released in 2008.",
+          "Nokia released the first smartphone, the Nokia 9000 Communicator, in 1996.",
+          "BlackBerry was a popular smartphone that combined email, phone, and PDA features with a physical keyboard.",
+          "Microsoft released the Windows Mobile operating system in 2000."
+        ],
+        "unverified_claims": [
+          "The invention of the smartphone is a bit complex and involved the contributions of several individuals and companies over time.",
+          "It's difficult to attribute the invention of the smartphone to a single person.",
+          "The DynaTAC 8000X weighed about 2 pounds."
+        ],
+        "evidence": [
+          "Judge confidence: 0.85",
+          "Verified: 7, Unverified: 3",
+          "Overconfidence flags: [\"It's difficult to attribute the invention of the smartphone to a single person.\"]"
+        ],
+        "metadata": {
+          "raw_confidence": 0.85,
+          "claim_ratio": 0.7,
+          "fabricated_citations": [],
+          "overconfidence_flags": [
+            "It's difficult to attribute the invention of the smartphone to a single person."
+          ]
+        }
+      },
+      {
+        "name": "rag_grounding",
+        "score": 0.4133,
+        "verified_claims": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973.",
+          "The IBM Simon had a touchscreen display.",
+          "The IBM Simon had email capabilities.",
+          "The IBM Simon had fax capabilities.",
+          "The IBM Simon had phone capabilities.",
+          "IBM released the IBM Simon in 1993."
+        ],
+        "unverified_claims": [
+          "The DynaTAC 8000X weighed about 2 pounds.",
+          "The IBM Simon had a calendar.",
+          "The IBM Simon had an address book.",
+          "The iPhone was released in 2007.",
+          "The iPhone had a multi-touch interface.",
+          "The iPhone had a mobile app store.",
+          "The iPhone had a sleek design.",
+          "The iPhone was developed by a team led by Steve Jobs.",
+          "The Android operating system was first released in 2008.",
+          "The Android operating system was designed to be an open-source alternative to iOS.",
+          "The Android operating system became one of the most popular mobile operating systems in the world.",
+          "Nokia released the first smartphone, the Nokia 9000 Communicator, in 1996.",
+          "The Nokia 9000 Communicator had a full keyboard.",
+          "The Nokia 9000 Communicator had email capabilities.",
+          "The Nokia 9000 Communicator had web browsing capabilities.",
+          "The BlackBerry was released in 1999.",
+          "The BlackBerry had email capabilities.",
+          "The BlackBerry had phone capabilities.",
+          "The BlackBerry had PDA features.",
+          "The BlackBerry had a physical keyboard.",
+          "Microsoft released the Windows Mobile operating system in 2000.",
+          "The Windows Mobile operating system was used in a variety of smartphones.",
+          "The HTC Touch used the Windows Mobile operating system.",
+          "The Samsung Omnia used the Windows Mobile operating system."
+        ],
+        "evidence": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973. → supported (web evidence: On April 3, 1973, Martin Cooper made the first ever cellphone call on the streets of New York. His invention, a brick-sized device, became the first cellphone ...)",
+          "The DynaTAC 8000X weighed about 2 pounds. → contradicted (web evidence: The DynaTAC 8000X was 10 inches (25 cm) long and weighed 2.5 pounds (1 kg).)",
+          "IBM released the IBM Simon in 1993. → partially_supported (web evidence: Announced on November 2, 1993, and released on August 16, 1994, the IBM Simon was a cellular phone and PDA combination designed by IBM.)",
+          "The IBM Simon had a touchscreen display. → supported (web evidence: Built on an x86 processor, the IBM Simon features a 4.5 inch resistive touchscreen display and runs an MS-DOS-compatible operating system with the ability to install additional software using its PCMCIA slot,)",
+          "The IBM Simon had email capabilities. → supported (web evidence: In addition to its ability to make and receive cellular phone calls, Simon was also able to send and receive and also give faxes, e-mails and cellular pages.)",
+          "The IBM Simon had fax capabilities. → supported (web evidence: In addition to its ability to make and receive cellular phone calls, Simon was also able to send and receive and also give faxes, e-mails and cellular pages.)",
+          "The IBM Simon had phone capabilities. → supported (web evidence: In addition to its ability to make and receive cellular phone calls, Simon was also able to send and receive and also give faxes, e-mails and cellular pages.)",
+          "The IBM Simon had a calendar. → not_found (web evidence: )",
+          "The IBM Simon had an address book. → not_found (web evidence: )",
+          "The iPhone was released in 2007. → not_found (web evidence: )",
+          "The iPhone had a multi-touch interface. → not_found (web evidence: )",
+          "The iPhone had a mobile app store. → not_found (web evidence: )",
+          "The iPhone had a sleek design. → not_found (web evidence: )",
+          "The iPhone was developed by a team led by Steve Jobs. → not_found (web evidence: )",
+          "The Android operating system was first released in 2008. → not_found (web evidence: )",
+          "The Android operating system was designed to be an open-source alternative to iOS. → not_found (web evidence: )",
+          "The Android operating system became one of the most popular mobile operating systems in the world. → not_found (web evidence: )",
+          "Nokia released the first smartphone, the Nokia 9000 Communicator, in 1996. → not_found (web evidence: )",
+          "The Nokia 9000 Communicator had a full keyboard. → not_found (web evidence: )",
+          "The Nokia 9000 Communicator had email capabilities. → not_found (web evidence: )",
+          "The Nokia 9000 Communicator had web browsing capabilities. → not_found (web evidence: )",
+          "The BlackBerry was released in 1999. → not_found (web evidence: )",
+          "The BlackBerry had email capabilities. → not_found (web evidence: )",
+          "The BlackBerry had phone capabilities. → not_found (web evidence: )",
+          "The BlackBerry had PDA features. → not_found (web evidence: )",
+          "The BlackBerry had a physical keyboard. → not_found (web evidence: )",
+          "Microsoft released the Windows Mobile operating system in 2000. → not_found (web evidence: )",
+          "The Windows Mobile operating system was used in a variety of smartphones. → not_found (web evidence: )",
+          "The HTC Touch used the Windows Mobile operating system. → not_found (web evidence: )",
+          "The Samsung Omnia used the Windows Mobile operating system. → not_found (web evidence: )"
+        ],
+        "metadata": {
+          "source": "context_docs",
+          "docs_retrieved": 48,
+          "claims_extracted": 30,
+          "supported": 5,
+          "partially_supported": 1,
+          "contradicted": 1,
+          "not_found": 23
+        }
+      },
+      {
+        "name": "nli_entailment",
+        "score": 0.86,
+        "verified_claims": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973.",
+          "The DynaTAC 8000X weighed about 2 pounds.",
+          "IBM released the IBM Simon in 1993.",
+          "The IBM Simon had a touchscreen display.",
+          "The IBM Simon had email capabilities.",
+          "The IBM Simon had fax capabilities.",
+          "The IBM Simon had phone capabilities.",
+          "The IBM Simon had a calendar.",
+          "The IBM Simon had an address book.",
+          "The iPhone was released in 2007.",
+          "The iPhone had a multi-touch interface.",
+          "The iPhone had a mobile app store.",
+          "The iPhone had a sleek design.",
+          "The iPhone was developed by a team led by Steve Jobs.",
+          "The Android operating system was first released in 2008.",
+          "The Nokia 9000 Communicator had a full keyboard.",
+          "The Nokia 9000 Communicator had email capabilities.",
+          "The Nokia 9000 Communicator had web browsing capabilities.",
+          "The BlackBerry had PDA features.",
+          "The BlackBerry had a physical keyboard.",
+          "Microsoft released the Windows Mobile operating system in 2000.",
+          "The Windows Mobile operating system was used in a variety of smartphones.",
+          "The HTC Touch used the Windows Mobile operating system."
+        ],
+        "unverified_claims": [],
+        "evidence": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973. → entailment (71% confidence)",
+          "The DynaTAC 8000X weighed about 2 pounds. → entailment (62% confidence)",
+          "IBM released the IBM Simon in 1993. → entailment (67% confidence)",
+          "The IBM Simon had a touchscreen display. → entailment (70% confidence)",
+          "The IBM Simon had email capabilities. → entailment (65% confidence)",
+          "The IBM Simon had fax capabilities. → entailment (66% confidence)",
+          "The IBM Simon had phone capabilities. → entailment (70% confidence)",
+          "The IBM Simon had a calendar. → entailment (69% confidence)",
+          "The IBM Simon had an address book. → entailment (69% confidence)",
+          "The iPhone was released in 2007. → entailment (73% confidence)",
+          "The iPhone had a multi-touch interface. → entailment (79% confidence)",
+          "The iPhone had a mobile app store. → entailment (61% confidence)",
+          "The iPhone had a sleek design. → entailment (66% confidence)",
+          "The iPhone was developed by a team led by Steve Jobs. → entailment (53% confidence)",
+          "The Android operating system was first released in 2008. → entailment (63% confidence)",
+          "The Android operating system was designed to be an open-source alternative to iOS. → neutral (47% confidence)",
+          "The Android operating system became one of the most popular mobile operating systems in the world. → neutral (48% confidence)",
+          "Nokia released the first smartphone, the Nokia 9000 Communicator, in 1996. → neutral (50% confidence)",
+          "The Nokia 9000 Communicator had a full keyboard. → entailment (57% confidence)",
+          "The Nokia 9000 Communicator had email capabilities. → entailment (52% confidence)",
+          "The Nokia 9000 Communicator had web browsing capabilities. → entailment (53% confidence)",
+          "The BlackBerry was released in 1999. → neutral (46% confidence)",
+          "The BlackBerry had email capabilities. → neutral (48% confidence)",
+          "The BlackBerry had phone capabilities. → neutral (46% confidence)",
+          "The BlackBerry had PDA features. → entailment (53% confidence)",
+          "The BlackBerry had a physical keyboard. → entailment (54% confidence)",
+          "Microsoft released the Windows Mobile operating system in 2000. → entailment (51% confidence)",
+          "The Windows Mobile operating system was used in a variety of smartphones. → entailment (53% confidence)",
+          "The HTC Touch used the Windows Mobile operating system. → entailment (55% confidence)",
+          "The Samsung Omnia used the Windows Mobile operating system. → neutral (49% confidence)"
+        ],
+        "metadata": {
+          "model": "facebook/bart-large-mnli",
+          "claims_extracted": 30,
+          "entailed": 23,
+          "contradicted": 0,
+          "neutral": 7
+        }
+      }
+    ],
+    "was_corrected": false,
+    "corrected_response": null
+  },
+  "chat_aa4911cddc67a3e25ba86db43849bea9e34a08c8f928bf5ceb91120e5224f15e": {
+    "query": "who invented the smartphone?",
+    "response": "The invention of the smartphone is a bit complex and involved the contributions of several individuals and companies over time. While it's difficult to attribute the invention of the smartphone to a single person, I can provide you with some key milestones and innovators who played a significant role in its development.\n\n1. **Martin Cooper**: Often credited as the inventor of the first handheld mobile phone, Cooper, an engineer at Motorola, made the first public call on a handheld mobile phone on April 3, 1973. This call was made using the DynaTAC 8000X, a bulky device that weighed about 2 pounds.\n2. **IBM Simon**: In 1993, IBM released the IBM Simon, a touchscreen device that combined the features of a phone, computer, and personal digital assistant (PDA). It had a touchscreen display, email, fax, and phone capabilities, as well as a calendar and address book.\n3. **Apple's Newton**: In 1993, Apple released the Newton, a PDA that had a touchscreen display and could send and receive faxes, emails, and phone messages. While not a traditional phone, it laid the groundwork for future smartphones.\n4. **Nokia 9000 Communicator**: In 1996, Nokia released the 9000 Communicator, a smartphone that combined a phone, email, web browsing, and PDA features. It had a full keyboard and a color screen.\n5. **BlackBerry**: In 1999, Research in Motion (RIM) released the first BlackBerry device, which was a smartphone that combined email, phone, and PDA features. It was popular among business users and helped establish the concept of a smartphone as we know it today.\n6. **Apple iPhone**: In 2007, Apple released the iPhone, a revolutionary smartphone that combined a multi-touch interface, a mobile app store, and a sleek design. The iPhone popularized the concept of a smartphone and set the standard for modern smartphones.\n\nWhile these individuals and companies played significant roles in the development of the smartphone, it's worth noting that the concept of a smartphone has evolved over time, and many others have contributed to its growth and innovation.",
+    "score": {
+      "final_score": 51.4,
+      "sub_scores": {
+        "semantic_entropy": 0.596,
+        "llm_judge": 0.5367,
+        "rag_grounding": 0.445,
+        "nli_entailment": 0.75
+      },
+      "verified_claims": [
+        "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973.",
+        "The DynaTAC 8000X was a bulky device that weighed about 2.5 pounds.",
+        "The IBM Simon was a cellular phone and PDA combination designed by IBM.",
+        "The IBM Simon was announced on November 2, 1993, and released on August 16, 1994.",
+        "IBM released the IBM Simon in 1993.",
+        "The IBM Simon had a touchscreen display.",
+        "The IBM Simon had email, fax, and phone capabilities.",
+        "The IBM Simon had a calendar and address book."
+      ],
+      "unverified_claims": [
+        "The invention of the smartphone is a bit complex and involved the contributions of several individuals and companies over time.",
+        "Apple's Newton laid the groundwork for future smartphones.",
+        "The Nokia 9000 Communicator combined a phone, email, web browsing, and PDA features.",
+        "The BlackBerry was popular among business users and helped establish the concept of a smartphone as we know it today.",
+        "The iPhone popularized the concept of a smartphone and set the standard for modern smartphones.",
+        "Apple released the Newton in 1993.",
+        "The Newton could send and receive faxes, emails, and phone messages.",
+        "Nokia released the 9000 Communicator in 1996.",
+        "The 9000 Communicator had a full keyboard.",
+        "The 9000 Communicator had a color screen.",
+        "Research in Motion (RIM) released the first BlackBerry device in 1999.",
+        "The first BlackBerry device combined email, phone, and PDA features.",
+        "Apple released the iPhone in 2007.",
+        "The iPhone had a multi-touch interface.",
+        "The iPhone had a mobile app store.",
+        "The iPhone had a sleek design.",
+        "The iPhone popularized the concept of a smartphone.",
+        "The iPhone set the standard for modern smartphones."
+      ],
+      "evidence": [
+        "Generated 3 alternative responses.",
+        "Average pairwise cosine similarity: 0.791",
+        "Judge confidence: 0.80",
+        "Verified: 4, Unverified: 5",
+        "Overconfidence flags: [\"While these individuals and companies played significant roles in the development of the smartphone, it's worth noting that the concept of a smartphone has evolved over time, and many others have contributed to its growth and innovation.\"]",
+        "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973. → supported (web evidence: On April 3, 1973, Martin Cooper made the first ever cellphone call on the streets of New York. His invention, a brick-sized device, became the first cellphone ...)",
+        "The DynaTAC 8000X weighed about 2 pounds. → contradicted (web evidence: 2.5 pounds)",
+        "IBM released the IBM Simon in 1993. → supported (web evidence: November 2, 1993)",
+        "The IBM Simon had a touchscreen display. → supported (web evidence: Built on an x86 processor, the IBM Simon features a 4.5 inch resistive touchscreen display and runs an MS-DOS-compatible operating system with the ability to install additional software using its PCMCIA slot,)",
+        "The IBM Simon had email, fax, and phone capabilities. → supported (web evidence: Aside from making calls, the Simon included an address book, calculator, calendar, clock, email, note pad, sketch pad, fax capability, and a PCMCIA slot for a memory storage card.)",
+        "The IBM Simon had a calendar and address book. → supported (web evidence: Aside from making calls, the Simon included an address book, calculator, calendar, clock, email, note pad, sketch pad, fax capability, and a PCMCIA slot for a memory storage card.)",
+        "Apple released the Newton in 1993. → contradicted (web evidence: Announced on November 2, 1993, and released on August 16, 1994, the IBM Simon was a cellular phone and PDA combination designed by IBM.)",
+        "The Newton had a touchscreen display. → not_found (web evidence: N/A)",
+        "The Newton could send and receive faxes, emails, and phone messages. → not_found (web evidence: N/A)",
+        "Nokia released the 9000 Communicator in 1996. → not_found (web evidence: N/A)",
+        "The 9000 Communicator had a full keyboard. → not_found (web evidence: N/A)",
+        "The 9000 Communicator had a color screen. → not_found (web evidence: N/A)",
+        "Research in Motion (RIM) released the first BlackBerry device in 1999. → not_found (web evidence: N/A)",
+        "The first BlackBerry device combined email, phone, and PDA features. → not_found (web evidence: N/A)",
+        "Apple released the iPhone in 2007. → not_found (web evidence: N/A)",
+        "The iPhone had a multi-touch interface. → not_found (web evidence: N/A)",
+        "The iPhone had a mobile app store. → not_found (web evidence: N/A)",
+        "The iPhone had a sleek design. → not_found (web evidence: N/A)",
+        "The iPhone popularized the concept of a smartphone. → not_found (web evidence: N/A)",
+        "The iPhone set the standard for modern smartphones. → not_found (web evidence: N/A)",
+        "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973. → entailment (68% confidence)",
+        "The DynaTAC 8000X weighed about 2 pounds. → entailment (68% confidence)",
+        "IBM released the IBM Simon in 1993. → entailment (65% confidence)",
+        "The IBM Simon had a touchscreen display. → entailment (66% confidence)",
+        "The IBM Simon had email, fax, and phone capabilities. → entailment (70% confidence)",
+        "The IBM Simon had a calendar and address book. → entailment (67% confidence)",
+        "Apple released the Newton in 1993. → entailment (72% confidence)",
+        "The Newton had a touchscreen display. → entailment (74% confidence)",
+        "The Newton could send and receive faxes, emails, and phone messages. → entailment (73% confidence)",
+        "Nokia released the 9000 Communicator in 1996. → neutral (48% confidence)",
+        "The 9000 Communicator had a full keyboard. → neutral (49% confidence)",
+        "The 9000 Communicator had a color screen. → entailment (55% confidence)",
+        "Research in Motion (RIM) released the first BlackBerry device in 1999. → contradiction (58% confidence)",
+        "The first BlackBerry device combined email, phone, and PDA features. → entailment (58% confidence)",
+        "Apple released the iPhone in 2007. → contradiction (56% confidence)",
+        "The iPhone had a multi-touch interface. → entailment (56% confidence)",
+        "The iPhone had a mobile app store. → neutral (0% confidence)",
+        "The iPhone had a sleek design. → neutral (41% confidence)",
+        "The iPhone popularized the concept of a smartphone. → entailment (53% confidence)",
+        "The iPhone set the standard for modern smartphones. → neutral (45% confidence)"
+      ],
+      "penalties": [
+        "Length mismatch: unusually long response (-3)"
+      ],
+      "is_trustworthy": false,
+      "threshold_used": 65.0
+    },
+    "detectors": [
+      {
+        "name": "semantic_entropy",
+        "score": 0.596,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "Generated 3 alternative responses.",
+          "Average pairwise cosine similarity: 0.791"
+        ],
+        "metadata": {
+          "n_samples": 3,
+          "avg_pairwise_similarity": 0.7907,
+          "min_pairwise_similarity": 0.7661,
+          "max_pairwise_similarity": 0.82
+        }
+      },
+      {
+        "name": "llm_judge",
+        "score": 0.5367,
+        "verified_claims": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973.",
+          "The DynaTAC 8000X was a bulky device that weighed about 2.5 pounds.",
+          "The IBM Simon was a cellular phone and PDA combination designed by IBM.",
+          "The IBM Simon was announced on November 2, 1993, and released on August 16, 1994."
+        ],
+        "unverified_claims": [
+          "The invention of the smartphone is a bit complex and involved the contributions of several individuals and companies over time.",
+          "Apple's Newton laid the groundwork for future smartphones.",
+          "The Nokia 9000 Communicator combined a phone, email, web browsing, and PDA features.",
+          "The BlackBerry was popular among business users and helped establish the concept of a smartphone as we know it today.",
+          "The iPhone popularized the concept of a smartphone and set the standard for modern smartphones."
+        ],
+        "evidence": [
+          "Judge confidence: 0.80",
+          "Verified: 4, Unverified: 5",
+          "Overconfidence flags: [\"While these individuals and companies played significant roles in the development of the smartphone, it's worth noting that the concept of a smartphone has evolved over time, and many others have contributed to its growth and innovation.\"]"
+        ],
+        "metadata": {
+          "raw_confidence": 0.8,
+          "claim_ratio": 0.4444,
+          "fabricated_citations": [],
+          "overconfidence_flags": [
+            "While these individuals and companies played significant roles in the development of the smartphone, it's worth noting that the concept of a smartphone has evolved over time, and many others have contributed to its growth and innovation."
+          ]
+        }
+      },
+      {
+        "name": "rag_grounding",
+        "score": 0.445,
+        "verified_claims": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973.",
+          "IBM released the IBM Simon in 1993.",
+          "The IBM Simon had a touchscreen display.",
+          "The IBM Simon had email, fax, and phone capabilities.",
+          "The IBM Simon had a calendar and address book."
+        ],
+        "unverified_claims": [
+          "The DynaTAC 8000X weighed about 2 pounds.",
+          "Apple released the Newton in 1993.",
+          "The Newton had a touchscreen display.",
+          "The Newton could send and receive faxes, emails, and phone messages.",
+          "Nokia released the 9000 Communicator in 1996.",
+          "The 9000 Communicator had a full keyboard.",
+          "The 9000 Communicator had a color screen.",
+          "Research in Motion (RIM) released the first BlackBerry device in 1999.",
+          "The first BlackBerry device combined email, phone, and PDA features.",
+          "Apple released the iPhone in 2007.",
+          "The iPhone had a multi-touch interface.",
+          "The iPhone had a mobile app store.",
+          "The iPhone had a sleek design.",
+          "The iPhone popularized the concept of a smartphone.",
+          "The iPhone set the standard for modern smartphones."
+        ],
+        "evidence": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973. → supported (web evidence: On April 3, 1973, Martin Cooper made the first ever cellphone call on the streets of New York. His invention, a brick-sized device, became the first cellphone ...)",
+          "The DynaTAC 8000X weighed about 2 pounds. → contradicted (web evidence: 2.5 pounds)",
+          "IBM released the IBM Simon in 1993. → supported (web evidence: November 2, 1993)",
+          "The IBM Simon had a touchscreen display. → supported (web evidence: Built on an x86 processor, the IBM Simon features a 4.5 inch resistive touchscreen display and runs an MS-DOS-compatible operating system with the ability to install additional software using its PCMCIA slot,)",
+          "The IBM Simon had email, fax, and phone capabilities. → supported (web evidence: Aside from making calls, the Simon included an address book, calculator, calendar, clock, email, note pad, sketch pad, fax capability, and a PCMCIA slot for a memory storage card.)",
+          "The IBM Simon had a calendar and address book. → supported (web evidence: Aside from making calls, the Simon included an address book, calculator, calendar, clock, email, note pad, sketch pad, fax capability, and a PCMCIA slot for a memory storage card.)",
+          "Apple released the Newton in 1993. → contradicted (web evidence: Announced on November 2, 1993, and released on August 16, 1994, the IBM Simon was a cellular phone and PDA combination designed by IBM.)",
+          "The Newton had a touchscreen display. → not_found (web evidence: N/A)",
+          "The Newton could send and receive faxes, emails, and phone messages. → not_found (web evidence: N/A)",
+          "Nokia released the 9000 Communicator in 1996. → not_found (web evidence: N/A)",
+          "The 9000 Communicator had a full keyboard. → not_found (web evidence: N/A)",
+          "The 9000 Communicator had a color screen. → not_found (web evidence: N/A)",
+          "Research in Motion (RIM) released the first BlackBerry device in 1999. → not_found (web evidence: N/A)",
+          "The first BlackBerry device combined email, phone, and PDA features. → not_found (web evidence: N/A)",
+          "Apple released the iPhone in 2007. → not_found (web evidence: N/A)",
+          "The iPhone had a multi-touch interface. → not_found (web evidence: N/A)",
+          "The iPhone had a mobile app store. → not_found (web evidence: N/A)",
+          "The iPhone had a sleek design. → not_found (web evidence: N/A)",
+          "The iPhone popularized the concept of a smartphone. → not_found (web evidence: N/A)",
+          "The iPhone set the standard for modern smartphones. → not_found (web evidence: N/A)"
+        ],
+        "metadata": {
+          "source": "context_docs",
+          "docs_retrieved": 40,
+          "claims_extracted": 20,
+          "supported": 5,
+          "partially_supported": 0,
+          "contradicted": 2,
+          "not_found": 13
+        }
+      },
+      {
+        "name": "nli_entailment",
+        "score": 0.75,
+        "verified_claims": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973.",
+          "The DynaTAC 8000X weighed about 2 pounds.",
+          "IBM released the IBM Simon in 1993.",
+          "The IBM Simon had a touchscreen display.",
+          "The IBM Simon had email, fax, and phone capabilities.",
+          "The IBM Simon had a calendar and address book.",
+          "Apple released the Newton in 1993.",
+          "The Newton had a touchscreen display.",
+          "The Newton could send and receive faxes, emails, and phone messages.",
+          "The 9000 Communicator had a color screen.",
+          "The first BlackBerry device combined email, phone, and PDA features.",
+          "The iPhone had a multi-touch interface.",
+          "The iPhone popularized the concept of a smartphone."
+        ],
+        "unverified_claims": [
+          "Research in Motion (RIM) released the first BlackBerry device in 1999.",
+          "Apple released the iPhone in 2007."
+        ],
+        "evidence": [
+          "Martin Cooper made the first public call on a handheld mobile phone on April 3, 1973. → entailment (68% confidence)",
+          "The DynaTAC 8000X weighed about 2 pounds. → entailment (68% confidence)",
+          "IBM released the IBM Simon in 1993. → entailment (65% confidence)",
+          "The IBM Simon had a touchscreen display. → entailment (66% confidence)",
+          "The IBM Simon had email, fax, and phone capabilities. → entailment (70% confidence)",
+          "The IBM Simon had a calendar and address book. → entailment (67% confidence)",
+          "Apple released the Newton in 1993. → entailment (72% confidence)",
+          "The Newton had a touchscreen display. → entailment (74% confidence)",
+          "The Newton could send and receive faxes, emails, and phone messages. → entailment (73% confidence)",
+          "Nokia released the 9000 Communicator in 1996. → neutral (48% confidence)",
+          "The 9000 Communicator had a full keyboard. → neutral (49% confidence)",
+          "The 9000 Communicator had a color screen. → entailment (55% confidence)",
+          "Research in Motion (RIM) released the first BlackBerry device in 1999. → contradiction (58% confidence)",
+          "The first BlackBerry device combined email, phone, and PDA features. → entailment (58% confidence)",
+          "Apple released the iPhone in 2007. → contradiction (56% confidence)",
+          "The iPhone had a multi-touch interface. → entailment (56% confidence)",
+          "The iPhone had a mobile app store. → neutral (0% confidence)",
+          "The iPhone had a sleek design. → neutral (41% confidence)",
+          "The iPhone popularized the concept of a smartphone. → entailment (53% confidence)",
+          "The iPhone set the standard for modern smartphones. → neutral (45% confidence)"
+        ],
+        "metadata": {
+          "model": "facebook/bart-large-mnli",
+          "claims_extracted": 20,
+          "entailed": 13,
+          "contradicted": 2,
+          "neutral": 5
+        }
+      }
+    ],
+    "was_corrected": false,
+    "corrected_response": null
+  }
+}

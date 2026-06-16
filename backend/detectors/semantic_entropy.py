@@ -2,7 +2,7 @@
 Semantic Entropy Detector (Self-Consistency Check)
 
 Runs the same query N times with temperature > 0, computes pairwise
-semantic similarity between responses using fastembed embeddings,
+semantic similarity between responses using TF-IDF cosine similarity,
 and derives a consistency score.
 
 High consistency → model is confident → higher score
@@ -19,7 +19,8 @@ import os
 from itertools import combinations
 
 import numpy as np
-from fastembed import TextEmbedding
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 from llm_client import LLMClient
 from detectors.base import BaseDetector, DetectorResult
@@ -41,8 +42,8 @@ class SemanticEntropyDetector(BaseDetector):
             os.getenv("SELF_CONSISTENCY_SAMPLES", "5")
         )
         self.temperature = temperature
-        # fastembed — small, ONNX, no PyTorch needed
-        self._embedder = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
+        # TF-IDF vectorizer: lightweight, CPU-only, no warmup needed
+        self._vectorizer = TfidfVectorizer()
 
     # ── public ──────────────────────────────────────────────────────
 
@@ -52,23 +53,20 @@ class SemanticEntropyDetector(BaseDetector):
         response: str,
         context_docs: list[str] | None = None,
     ) -> DetectorResult:
-        # Generate N alternative responses
-        samples = await asyncio.to_thread(
-            self.llm.generate_multiple,
-            query,
-            n=self.n_samples,
-            temperature=self.temperature,
-        )
+        # Generate N alternative responses concurrently in thread pools
+        tasks = [
+            asyncio.to_thread(self.llm.generate_response, query, self.temperature)
+            for _ in range(self.n_samples)
+        ]
+        samples = await asyncio.gather(*tasks)
 
         # Include the original response in the pool
         all_responses = [response] + samples
 
-        # Embed all responses
-        embeddings = list(self._embedder.embed(all_responses))
-        emb_matrix = np.array(embeddings)
-
-        # Pairwise cosine similarity
-        similarities = self._pairwise_cosine(emb_matrix)
+        # Compute TF-IDF cosine similarity between all response pairs
+        similarities = await asyncio.to_thread(
+            self._compute_similarities, all_responses
+        )
         avg_similarity = float(np.mean(similarities)) if similarities else 0.5
 
         # Map similarity → score (higher similarity = more consistent)
@@ -95,9 +93,23 @@ class SemanticEntropyDetector(BaseDetector):
 
     # ── helpers ─────────────────────────────────────────────────────
 
+    def _compute_similarities(self, texts: list[str]) -> list[float]:
+        """Compute pairwise TF-IDF cosine similarity for all response pairs."""
+        if len(texts) < 2:
+            return [1.0]
+        try:
+            tfidf_matrix = self._vectorizer.fit_transform(texts)
+            sim_matrix = cosine_similarity(tfidf_matrix)
+        except Exception:
+            return [0.5]
+        sims: list[float] = []
+        for i, j in combinations(range(len(texts)), 2):
+            sims.append(float(sim_matrix[i, j]))
+        return sims
+
     @staticmethod
     def _pairwise_cosine(matrix: np.ndarray) -> list[float]:
-        """Compute cosine similarity for every unique pair."""
+        """Retained for reference only (not called in current implementation)."""
         norms = np.linalg.norm(matrix, axis=1, keepdims=True)
         norms = np.where(norms == 0, 1e-10, norms)
         normed = matrix / norms
@@ -108,12 +120,16 @@ class SemanticEntropyDetector(BaseDetector):
 
     @staticmethod
     def _calibrate(avg_sim: float) -> float:
-        """Map average cosine similarity to a 0–1 confidence score.
+        """Map average TF-IDF cosine similarity to a 0–1 confidence score.
 
-        Empirically tuned thresholds:
-          sim > 0.92 → full confidence (1.0)
-          sim < 0.60 → no confidence  (0.0)
+        Thresholds:
+          sim >= 0.92 → full confidence (1.0)
+          sim <= 0.60 → no confidence  (0.0)
           Linear interpolation in between.
+
+        Why 0.92 not 1.0?  Slight phrasing variations in highly consistent
+        answers (e.g. synonyms) naturally prevent a perfect cosine similarity.
+        A value like 0.98 is already "perfectly consistent."
         """
         LOW, HIGH = 0.60, 0.92
         if avg_sim >= HIGH:

@@ -4,15 +4,16 @@ A multi-signal middleware that evaluates LLM response trustworthiness and option
 
 ## What It Does
 
-Sits between your user and any LLM. You send a query + response — it scores trustworthiness (0–100) using three independent detection signals, and offers correction when scores are low.
+Sits between your user and any LLM. You send a query + response — it scores trustworthiness (0–100) using four independent detection signals, and offers correction when scores are low.
 
 ### Detection Signals
 
 | Detector | What It Checks | Weight |
 |---|---|---|
-| **Semantic Entropy** | Self-consistency across 5 samples using cosine similarity | 20% |
-| **LLM Judge** | Structured fact-checking via a judge prompt | 25% |
-| **RAG Grounding** | Claim verification against a knowledge base | 40% |
+| **RAG Grounding** | Claim verification against live Google Search results (Serper.dev) | 40% |
+| **LLM Judge** | Structured fact-checking via a stronger judge model | 25% |
+| **Semantic Entropy** | Self-consistency across multiple samples using cosine similarity | 20% |
+| **NLI Entailment** | Natural language inference-based entailment scoring | 15% |
 
 ### Score Interpretation
 
@@ -22,7 +23,7 @@ Sits between your user and any LLM. You send a query + response — it scores tr
 
 ## Score Calibration & Logic
 
-To prevent deceptive metrics (like high high confidence for incorrect facts), the system uses a calibrated blending approach:
+To prevent deceptive metrics (like high confidence for incorrect facts), the system uses a calibrated blending approach:
 
 ### 🟢 Semantic Entropy (Threshold-based)
 Instead of a raw similarity score, we use a calibrated threshold mapping:
@@ -38,13 +39,21 @@ The Judge score is a holistic evaluation, not just a raw confidence number:
 
 *Example: A judge with 90% confidence that verified 4/5 claims but used overconfident language results in a final score of **79%**.*
 
+### 🔴 RAG Grounding (Live Web Search)
+Claims are extracted from the response and verified against real-time Google Search results:
+- Each claim is searched independently and concurrently via the Serper.dev API.
+- Verdicts: `supported`, `partially_supported`, `contradicted`, or `not_found`.
+- Scoring: `supported=1.0`, `partial=0.5`, `not_found=0.3`, `contradicted=0.0`.
+- If `SERPER_API_KEY` is not set, returns a neutral `0.5` penalty score.
+
 ## Tech Stack
 
 - **Backend**: FastAPI + Python
 - **Frontend**: React + Vite + Tailwind CSS v4
-- **LLM**: Groq (model-agnostic wrapper — swap to any provider)
-- **Vector DB**: ChromaDB (persistent, ONNX embeddings via fastembed)
-- **Embeddings**: fastembed (BAAI/bge-small-en-v1.5, CPU-only, no PyTorch)
+- **LLM (Generation)**: Groq — `llama-3.1-8b-instant` (fast, for generating responses)
+- **LLM (Judge)**: Groq — `llama-3.3-70b-versatile` (stronger, for fact-checking)
+- **Web Search**: Serper.dev (real-time Google Search for RAG grounding)
+- **HTTP Client**: httpx (async web search requests)
 
 ## Quick Start
 
@@ -53,8 +62,7 @@ The Judge score is a holistic evaluation, not just a raw confidence number:
 ```bash
 cd backend
 pip install -r requirements.txt
-cp .env.example .env
-# Add your GROQ_API_KEY to .env
+# Edit .env and add your API keys (see Environment Variables below)
 python -m uvicorn backend.main:app --reload
 ```
 
@@ -72,12 +80,11 @@ Frontend runs on `http://localhost:5173` and proxies `/api` to the backend at `h
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/health` | Health check + model info |
+| `GET` | `/api/health` | Health check + model info (shows both generation and judge models) |
 | `POST` | `/api/detect` | Score a query+response pair |
 | `POST` | `/api/chat` | Generate → detect → optionally fix |
+| `POST` | `/api/chat/stream` | Streaming version of `/api/chat` |
 | `POST` | `/api/correct` | Fix a hallucinated response |
-| `POST` | `/api/kb/add` | Add documents to knowledge base |
-| `DELETE` | `/api/kb/reset` | Clear the knowledge base |
 
 ### Example: Detect Hallucination
 
@@ -101,12 +108,19 @@ curl -X POST http://localhost:8000/api/chat \
   }'
 ```
 
+### Example: Health Check
+
+```bash
+curl http://localhost:8000/api/health
+# Returns: { "status": "ok", "model": "llama-3.1-8b-instant", "judge_model": "llama-3.3-70b-versatile" }
+```
+
 ## Correction Strategies
 
 | Strategy | Description | When to Use |
 |---|---|---|
 | `constrained` | Re-prompts the LLM to revise specific unverified claims | Default first pass |
-| `rag` | Regenerates answer grounded exclusively in retrieved docs | When knowledge base is populated |
+| `rag` | Regenerates answer grounded exclusively in retrieved web snippets | When claims are web-verifiable |
 | `critic_loop` | Multi-round critic + generator refinement (2–3 rounds) | High-stakes questions |
 
 ## Project Structure
@@ -118,11 +132,13 @@ hallucination-detector/
 │   ├── llm_client.py            # Model-agnostic LLM wrapper (Groq default)
 │   ├── aggregator.py            # Weighted scoring + penalties
 │   ├── corrector.py             # Fix pipeline (3 strategies)
+│   ├── cache_manager.py         # Request-level caching
 │   └── detectors/
 │       ├── base.py              # Abstract base class + DetectorResult
-│       ├── semantic_entropy.py  # Self-consistency via embeddings
-│       ├── llm_judge.py         # LLM-as-judge fact-checking
-│       └── rag_grounding.py     # RAG-based claim verification
+│       ├── semantic_entropy.py  # Self-consistency via cosine similarity
+│       ├── llm_judge.py         # LLM-as-judge fact-checking (stronger model)
+│       ├── rag_grounding.py     # Live web search claim verification (Serper.dev)
+│       └── nli_entailment.py    # NLI-based entailment scoring
 └── frontend/
     ├── src/
     │   ├── App.jsx              # Main layout + state management
@@ -138,11 +154,12 @@ hallucination-detector/
 
 | Variable | Default | Description |
 |---|---|---|
-| `GROQ_API_KEY` | — | Your Groq API key |
-| `LLM_MODEL` | `llama-3.3-70b-versatile` | Model to use |
-| `DETECTION_THRESHOLD` | `65` | Score threshold for trustworthiness |
-| `SELF_CONSISTENCY_SAMPLES` | `5` | Number of samples for semantic entropy |
-| `CHROMA_PERSIST_DIR` | `./chroma_data` | ChromaDB storage path |
+| `GROQ_API_KEY` | — | Your Groq API key (also supports `GROQ_API_KEYS` as a comma-separated list for key rotation) |
+| `LLM_MODEL` | `llama-3.1-8b-instant` | Model used to generate responses |
+| `JUDGE_MODEL` | `llama-3.3-70b-versatile` | Stronger model used exclusively for LLM-as-judge fact-checking |
+| `DETECTION_THRESHOLD` | `65` | Score threshold below which a response is flagged |
+| `SELF_CONSISTENCY_SAMPLES` | `3` | Number of samples generated for semantic entropy check |
+| `SERPER_API_KEY` | — | Serper.dev API key for live Google Search grounding (free tier available at serper.dev) |
 
 ## License
 

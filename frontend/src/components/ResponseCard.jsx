@@ -11,6 +11,8 @@ import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
+  Copy,
+  Check,
 } from 'lucide-react';
 
 function getScoreConfig(score) {
@@ -48,6 +50,16 @@ export default function ResponseCard({
 }) {
   const [showEvidence, setShowEvidence] = useState(false);
   const [showDetectors, setShowDetectors] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = () => {
+    const textToCopy = correctedResponse || response;
+    if (textToCopy) {
+      navigator.clipboard.writeText(textToCopy);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
+  };
 
   const finalScore = scoreData?.final_score ?? null;
   const config = finalScore !== null ? getScoreConfig(finalScore) : null;
@@ -166,6 +178,15 @@ export default function ResponseCard({
       {/* ── Action buttons ──────────────────────────────────── */}
       {finalScore !== null && (
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: showEvidence || showDetectors ? '1rem' : 0 }}>
+          <button
+            className="btn btn-ghost"
+            onClick={handleCopy}
+            title="Copy string to clipboard"
+          >
+            {isCopied ? <Check size={14} color="var(--clr-green)" /> : <Copy size={14} />}
+            {isCopied ? 'Copied!' : 'Copy'}
+          </button>
+
           <button
             id="show-evidence-btn"
             className="btn btn-ghost"
