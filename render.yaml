@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: hallucination-detector-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEYS
+        sync: false  # Set manually in Render dashboard
+      - key: SERPER_API_KEY
+        sync: false
+      - key: HF_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: llama-3.1-8b-instant
+      - key: JUDGE_MODEL
+        value: llama-3.3-70b-versatile
+      - key: DETECTION_THRESHOLD
+        value: "65"
+      - key: SELF_CONSISTENCY_SAMPLES
+        value: "3"
+      - key: PYTHON_VERSION
+        value: "3.11.11"

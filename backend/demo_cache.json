@@ -1373,5 +1373,102 @@
     ],
     "was_corrected": false,
     "corrected_response": null
+  },
+  "chat_a89c7551e6d95395167f1c2887eee3f0f12b4f808e4e701c43356194e239802a": {
+    "query": "who built it?",
+    "response": "The Burj Khalifa was built by a joint venture of several companies, including:\n\n1. **South Korea's Samsung C&T**: Samsung C&T was the main contractor for the project and was responsible for the construction of the building's superstructure.\n2. **United Arab Emirates' Arabtec Holding**: Arabtec Holding was a local contractor that worked on the project and was responsible for the construction of the building's exterior cladding and glazing.\n3. **United States' Bechtel Group**: Bechtel Group was a construction management company that provided project management and engineering services for the project.\n4. **United Arab Emirates' BESIX Group**: BESIX Group was a local contractor that worked on the project and was responsible for the construction of the building's foundation and basement.\n5. **United Arab Emirates' Al Naboodah Group**: Al Naboodah Group was a local contractor that worked on the project and was responsible for the construction of the building's mechanical, electrical, and plumbing (MEP) systems.\n\nThe design of the Burj Khalifa was led by:\n\n1. **Skidmore, Owings & Merrill (SOM)**: SOM was the architectural firm that designed the building's iconic shape and structure.\n2. **Hyder Consulting**: Hyder Consulting was the engineering firm that designed the building's mechanical, electrical, and plumbing (MEP) systems.\n3. **Dar Al-Handasah**: Dar Al-Handasah was the engineering firm that designed the building's structural system.\n\nThe Burj Khalifa was developed by:\n\n1. **Emaar Properties**: Emaar Properties was the developer of the Burj Khalifa and was responsible for the overall project management and marketing of the building.\n\nThese companies worked together to bring the Burj Khalifa to life, and the building was officially opened on January 4, 2010.",
+    "score": {
+      "final_score": 38.5,
+      "sub_scores": {
+        "semantic_entropy": 0.0,
+        "llm_judge": 0.0,
+        "rag_grounding": 0.7,
+        "nli_entailment": 0.7
+      },
+      "verified_claims": [],
+      "unverified_claims": [
+        "I can still provide a general response to the question 'who built it?' without any specific context."
+      ],
+      "evidence": [
+        "Generated 3 alternative responses.",
+        "Average pairwise cosine similarity: 0.474",
+        "Judge confidence: 0.00",
+        "Verified: 0, Unverified: 1",
+        "Overconfidence flags: ['I can still provide a general response']",
+        "No factual claims extracted from response.",
+        "No factual claims extracted from response."
+      ],
+      "penalties": [],
+      "is_trustworthy": false,
+      "threshold_used": 65.0,
+      "citations": {}
+    },
+    "detectors": [
+      {
+        "name": "semantic_entropy",
+        "score": 0.0,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "Generated 3 alternative responses.",
+          "Average pairwise cosine similarity: 0.474"
+        ],
+        "metadata": {
+          "n_samples": 3,
+          "avg_pairwise_similarity": 0.4737,
+          "min_pairwise_similarity": 0.3112,
+          "max_pairwise_similarity": 0.569
+        }
+      },
+      {
+        "name": "llm_judge",
+        "score": 0.0,
+        "verified_claims": [],
+        "unverified_claims": [
+          "I can still provide a general response to the question 'who built it?' without any specific context."
+        ],
+        "evidence": [
+          "Judge confidence: 0.00",
+          "Verified: 0, Unverified: 1",
+          "Overconfidence flags: ['I can still provide a general response']"
+        ],
+        "metadata": {
+          "raw_confidence": 0.0,
+          "claim_ratio": 0.0,
+          "fabricated_citations": [],
+          "overconfidence_flags": [
+            "I can still provide a general response"
+          ]
+        }
+      },
+      {
+        "name": "rag_grounding",
+        "score": 0.7,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "No factual claims extracted from response."
+        ],
+        "metadata": {
+          "claims_extracted": 0,
+          "source": "context_docs"
+        }
+      },
+      {
+        "name": "nli_entailment",
+        "score": 0.7,
+        "verified_claims": [],
+        "unverified_claims": [],
+        "evidence": [
+          "No factual claims extracted from response."
+        ],
+        "metadata": {
+          "claims_extracted": 0,
+          "fallback_active": false
+        }
+      }
+    ],
+    "was_corrected": true,
+    "corrected_response": "I didn't provide a previous response, so I'll start fresh. However, I can still provide a general response to the question \"who built it?\" without any specific context.\n\nTo provide a helpful and complete response, I would need more information about what \"it\" refers to. Could you please provide more context or clarify what you are asking about?"
   }
 }
